@@ -355,27 +355,6 @@ void    ImGui_ImplIrrlicht_InvalidateDeviceObjects() {
 bool    ImGui_ImplIrrlicht_Init(irr::IrrlichtDevice *dev) {
     device = dev;
     ImGuiIO &io = ImGui::GetIO();
-
-    io.KeyMap[ImGuiKey_Tab] = irr::KEY_TAB;                     // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
-    io.KeyMap[ImGuiKey_LeftArrow] = irr::KEY_LEFT;
-    io.KeyMap[ImGuiKey_RightArrow] = irr::KEY_RIGHT;
-    io.KeyMap[ImGuiKey_UpArrow] = irr::KEY_UP;
-    io.KeyMap[ImGuiKey_DownArrow] = irr::KEY_DOWN;
-    io.KeyMap[ImGuiKey_PageUp] = irr::KEY_NEXT;
-    io.KeyMap[ImGuiKey_PageDown] = irr::KEY_PRIOR;
-    io.KeyMap[ImGuiKey_Home] = irr::KEY_HOME;
-    io.KeyMap[ImGuiKey_End] = irr::KEY_END;
-    io.KeyMap[ImGuiKey_Delete] = irr::KEY_DELETE;
-    io.KeyMap[ImGuiKey_Backspace] = irr::KEY_BACK;
-    io.KeyMap[ImGuiKey_Enter] = irr::KEY_RETURN;
-    io.KeyMap[ImGuiKey_Escape] = irr::KEY_ESCAPE;
-    io.KeyMap[ImGuiKey_A] = irr::KEY_KEY_A;
-    io.KeyMap[ImGuiKey_C] = irr::KEY_KEY_C;
-    io.KeyMap[ImGuiKey_V] = irr::KEY_KEY_V;
-    io.KeyMap[ImGuiKey_X] = irr::KEY_KEY_X;
-    io.KeyMap[ImGuiKey_Y] = irr::KEY_KEY_Y;
-    io.KeyMap[ImGuiKey_Z] = irr::KEY_KEY_Z;
-
     io.RenderDrawListsFn = ImGui_ImplIrrlicht_RenderDrawLists;   // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
     io.SetClipboardTextFn = ImGui_ImplIrrlicht_SetClipboardText;
     io.GetClipboardTextFn = ImGui_ImplIrrlicht_GetClipboardText;

@@ -34,105 +34,87 @@
 // module includes
 #include <IrrIMGUI/IrrIMGUIDebug.h>
 
-namespace IrrIMGUI
-{
-namespace Debug
-{
+namespace IrrIMGUI {
+namespace Debug {
 
-  CChannelBuffer::CChannelBuffer(std::streambuf * pStreamBuffer, char const * pPrefix):
+CChannelBuffer::CChannelBuffer(std::streambuf *pStreamBuffer, char const *pPrefix):
     mpPrefix(pPrefix),
     mpBuffer(pStreamBuffer),
-    mIsNewLine(true)
-  {
+    mIsNewLine(true) {
     return;
-  }
+}
 
-  void CChannelBuffer::setupBuffer(std::streambuf * pStreamBuffer,  bool NextSymbolOnNewLine)
-  {
+void CChannelBuffer::setupBuffer(std::streambuf *pStreamBuffer,  bool NextSymbolOnNewLine) {
     mpBuffer = pStreamBuffer;
     mIsNewLine = NextSymbolOnNewLine;
     return;
-  }
+}
 
-  void CChannelBuffer::setupPrefix(char const * pPrefix)
-  {
+void CChannelBuffer::setupPrefix(char const *pPrefix) {
     mpPrefix = pPrefix;
     return;
-  }
+}
 
-  int CChannelBuffer::overflow(int const Character)
-  {
+int CChannelBuffer::overflow(int const Character) {
     int ReturnChar      = Character;
 
-    if (mpBuffer)
-    {
-      bool IsPrintAllowed = true;
+    if(mpBuffer) {
+        bool IsPrintAllowed = true;
 
-      if (mIsNewLine)
-      {
-        if (!printPrefix())
-        {
-          ReturnChar = EOF;
-          IsPrintAllowed = false;
-        }
-        mIsNewLine = false;
-      }
-
-      if (IsPrintAllowed)
-      {
-        if (mpBuffer->sputc(Character) == EOF)
-        {
-          ReturnChar = EOF;
+        if(mIsNewLine) {
+            if(!printPrefix()) {
+                ReturnChar = EOF;
+                IsPrintAllowed = false;
+            }
+            mIsNewLine = false;
         }
 
-        if (Character == '\n')
-        {
-          mIsNewLine = true;
+        if(IsPrintAllowed) {
+            if(mpBuffer->sputc(Character) == EOF) {
+                ReturnChar = EOF;
+            }
+
+            if(Character == '\n') {
+                mIsNewLine = true;
+            }
         }
-      }
     }
 
     return ReturnChar;
-  }
+}
 
-  int CChannelBuffer::sync(void)
-  {
+int CChannelBuffer::sync(void) {
     int Return = 0;
 
-    if (mpBuffer)
-    {
-      if (mpBuffer->pubsync() == -1)
-      {
-        Return = -1;
-      }
+    if(mpBuffer) {
+        if(mpBuffer->pubsync() == -1) {
+            Return = -1;
+        }
     }
 
     return Return;
-  }
+}
 
-  bool CChannelBuffer::printPrefix(void)
-  {
+bool CChannelBuffer::printPrefix(void) {
     bool IsPrintAllowed = true;
 
-    for (int i = 0; mpPrefix[i]; i++)
-    {
-      if (mpBuffer->sputc(mpPrefix[i]) == EOF)
-      {
-        break;
-        IsPrintAllowed = false;
-      }
+    for(int i = 0; mpPrefix[i]; i++) {
+        if(mpBuffer->sputc(mpPrefix[i]) == EOF) {
+            break;
+            IsPrintAllowed = false;
+        }
     }
 
     return IsPrintAllowed;
-  }
+}
 
-  CChannel NoteOutput(std::cout,    "[Note]    ");
+CChannel NoteOutput(std::cout,    "[Note]    ");
 
-  CChannel WarningOutput(std::cout, "[Warning] ");
+CChannel WarningOutput(std::cout, "[Warning] ");
 
-  CChannel ErrorOutput(std::cerr,   "[Error]   ");
+CChannel ErrorOutput(std::cerr,   "[Error]   ");
 
-  bool AreUnitTestAssertionsEnabled = true;
+bool AreUnitTestAssertionsEnabled = true;
 }
 }
 

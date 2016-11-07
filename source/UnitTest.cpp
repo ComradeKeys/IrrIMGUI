@@ -36,31 +36,27 @@
 #include "private/CGUITexture.h"
 #include <IrrIMGUI/UnitTest/MockHelper.h>
 
-namespace IrrIMGUI
-{
-namespace UnitTest
-{
+namespace IrrIMGUI {
+namespace UnitTest {
 
-  void createIMGUIDummyFont(void)
-  {
-    ImGuiIO& rGUIIO = ImGui::GetIO();
+void createIMGUIDummyFont(void) {
+    ImGuiIO &rGUIIO = ImGui::GetIO();
 
-    unsigned char * pPixelData;
+    unsigned char *pPixelData;
     int Width;
     int Height;
     int BytePerPixel;
     rGUIIO.Fonts->GetTexDataAsRGBA32(&pPixelData, &Width, &Height, &BytePerPixel);
 
     return;
-  }
+}
 
-  IGUITexture * getDummyTexture(void)
-  {
+IGUITexture *getDummyTexture(void) {
     static Private::CGUITexture DummyTexture;
     return &DummyTexture;
-  }
+}
 
-  bool MockHelper::mIsImGuiActivated = true;
+bool MockHelper::mIsImGuiActivated = true;
 
 }
 }

@@ -39,74 +39,62 @@
  * @{
  */
 
-namespace IrrIMGUI
-{
-  CCharFifo::CCharFifo(void):
+namespace IrrIMGUI {
+CCharFifo::CCharFifo(void):
     mWriteIndex(0),
-    mReadIndex(0)
-  {
+    mReadIndex(0) {
 
     ASSERT(isEmpty() == true);
     ASSERT(isFull() == false);
 
     return;
-  }
+}
 
-  CCharFifo::~CCharFifo(void)
-  {
+CCharFifo::~CCharFifo(void) {
     return;
-  }
+}
 
-  void CCharFifo::addChar(ImWchar C)
-  {
-    if (!isFull())
-    {
-      ASSERT(mWriteIndex < STATIC_ARRAY_SIZE(mCharArray));
+void CCharFifo::addChar(ImWchar C) {
+    if(!isFull()) {
+        ASSERT(mWriteIndex < STATIC_ARRAY_SIZE(mCharArray));
 
-      mCharArray[mWriteIndex] = C;
-      mWriteIndex++;
+        mCharArray[mWriteIndex] = C;
+        mWriteIndex++;
     }
 
     ASSERT(isEmpty() == false);
 
     return;
-  }
+}
 
-  ImWchar CCharFifo::getChar(void)
-  {
+ImWchar CCharFifo::getChar(void) {
     ImWchar ReturnChar = 0;
 
-    if(!isEmpty())
-    {
-      ASSERT(mReadIndex < STATIC_ARRAY_SIZE(mCharArray));
+    if(!isEmpty()) {
+        ASSERT(mReadIndex < STATIC_ARRAY_SIZE(mCharArray));
 
-      ReturnChar = mCharArray[mReadIndex];
-      mReadIndex++;
-    }
-    else
-    {
-      FASSERT(false);
+        ReturnChar = mCharArray[mReadIndex];
+        mReadIndex++;
+    } else {
+        FASSERT(false);
     }
 
     ASSERT(isFull() == false);
 
     return ReturnChar;
-  }
+}
 
-  bool CCharFifo::isEmpty(void) const
-  {
+bool CCharFifo::isEmpty(void) const {
     return mWriteIndex == mReadIndex;
-  }
+}
 
-  bool CCharFifo::isFull(void) const
-  {
-    return static_cast<irr::u8>(mWriteIndex+1) == mReadIndex;
-  }
+bool CCharFifo::isFull(void) const {
+    return static_cast<irr::u8>(mWriteIndex + 1) == mReadIndex;
+}
 
-  irr::u8 CCharFifo::getNumberOfElements(void) const
-  {
-    return mWriteIndex-mReadIndex;
-  }
+irr::u8 CCharFifo::getNumberOfElements(void) const {
+    return mWriteIndex - mReadIndex;
+}
 
 }
 

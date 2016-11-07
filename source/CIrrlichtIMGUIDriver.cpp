@@ -49,137 +49,125 @@
 * @{
 */
 
-namespace IrrIMGUI
-{
-namespace Private
-{
+namespace IrrIMGUI {
+namespace Private {
 
 /// @brief Contains driver classes for the IMGUI render system.
-namespace Driver
-{
+namespace Driver {
 /// @brief Functions that help adapting Irrlicht logic to IMGUI
-namespace IrrlichtHelper
-{
-  /// @brief A magic number for the default font ID IMGUI.
-  static irr::u8 * const IMGUI_FONT_ID = nullptr;
+namespace IrrlichtHelper {
+/// @brief A magic number for the default font ID IMGUI.
+static irr::u8 *const IMGUI_FONT_ID = nullptr;
 
-  /// @brief This is used to create an unique texture name.
-  static irr::u32 TextureCreationID = 0;
+/// @brief This is used to create an unique texture name.
+static irr::u32 TextureCreationID = 0;
 
-  /// @brief Indicates, if trilinear filter should be enabled for textures.
-  static bool IsTrilinearFilterEnabled = false;
+/// @brief Indicates, if trilinear filter should be enabled for textures.
+static bool IsTrilinearFilterEnabled = false;
 
-  /// @brief Translates an IMGUI Color to an Irrlicht Color.
-  /// @param ImGuiColor is the u32 Color value from IMGUI.
-  /// @return Returns a SColor object for Irrlicht.
-  irr::video::SColor getColorFromImGuiColor(irr::u32 ImGuiColor);
+/// @brief Translates an IMGUI Color to an Irrlicht Color.
+/// @param ImGuiColor is the u32 Color value from IMGUI.
+/// @return Returns a SColor object for Irrlicht.
+irr::video::SColor getColorFromImGuiColor(irr::u32 ImGuiColor);
 
-  /// @brief Creates a Texture object from the currently loaded Fonts.
-  /// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
-  /// @return Returns ITexture object as IMGUI Texture ID.
-  ImTextureID copyTextureIDFromGUIFont(irr::video::IVideoDriver * pIrrDriver);
+/// @brief Creates a Texture object from the currently loaded Fonts.
+/// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
+/// @return Returns ITexture object as IMGUI Texture ID.
+ImTextureID copyTextureIDFromGUIFont(irr::video::IVideoDriver *pIrrDriver);
 
-  /// @brief Created a Texture object from raw data.
-  /// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
-  /// @param ColorFormat Is the format of the Color of every Pixel.
-  /// @param pPixelData  Is a pointer to the pixel array.
-  /// @param Width       Is the number of Pixels in X direction.
-  /// @param Height      Is the number of Pixels in Y direction.
-  ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver * pIrrDriver, EColorFormat ColorFormat, irr::u8 * pPixelData, irr::u32 Width, irr::u32 Height);
+/// @brief Created a Texture object from raw data.
+/// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
+/// @param ColorFormat Is the format of the Color of every Pixel.
+/// @param pPixelData  Is a pointer to the pixel array.
+/// @param Width       Is the number of Pixels in X direction.
+/// @param Height      Is the number of Pixels in Y direction.
+ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *pIrrDriver, EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height);
 
-  /// @brief Creates a Texture object from the currently loaded Fonts.
-  /// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
-  /// @param pImage      Is a pointer to an Irrlicht IImage object.
-  /// @return Returns ITexture object as IMGUI Texture ID.
-  ImTextureID copyTextureIDFromImage(irr::video::IVideoDriver * pIrrDriver, irr::video::IImage * pImage);
+/// @brief Creates a Texture object from the currently loaded Fonts.
+/// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
+/// @param pImage      Is a pointer to an Irrlicht IImage object.
+/// @return Returns ITexture object as IMGUI Texture ID.
+ImTextureID copyTextureIDFromImage(irr::video::IVideoDriver *pIrrDriver, irr::video::IImage *pImage);
 
-  /// @brief Deleted the memory from this texture ID.
-  /// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
-  /// @param pGUITexture is a pointer to the texture object.
-  void deleteTextureID(irr::video::IVideoDriver * pIrrDriver, CGUITexture * pGUITexture);
+/// @brief Deleted the memory from this texture ID.
+/// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
+/// @param pGUITexture is a pointer to the texture object.
+void deleteTextureID(irr::video::IVideoDriver *pIrrDriver, CGUITexture *pGUITexture);
 
-  /// @brief Apples a clipping rectangle. Outside of this rectangle nothing is rendered.
-  /// @brief Disables the clipping rectangle.
-  /// @param pIrrDriver    Is a pointer to the Irrlicht driver object.
-  void disableClippingRect(irr::video::IVideoDriver * pIrrDriver);
+/// @brief Apples a clipping rectangle. Outside of this rectangle nothing is rendered.
+/// @brief Disables the clipping rectangle.
+/// @param pIrrDriver    Is a pointer to the Irrlicht driver object.
+void disableClippingRect(irr::video::IVideoDriver *pIrrDriver);
 }
 
-  irr::core::vector3df CIrrlichtIMGUIDriver::mOffset(0.0f, 0.0f, 0.0f);
+irr::core::vector3df CIrrlichtIMGUIDriver::mOffset(0.0f, 0.0f, 0.0f);
 
-  CIrrlichtIMGUIDriver::CIrrlichtIMGUIDriver(irr::IrrlichtDevice * const pDevice):
-    IIMGUIDriver(pDevice)
-  {
+CIrrlichtIMGUIDriver::CIrrlichtIMGUIDriver(irr::IrrlichtDevice *const pDevice):
+    IIMGUIDriver(pDevice) {
     setupFunctionPointer();
 
-    irr::video::IVideoDriver * pDriver = pDevice->getVideoDriver();
+    irr::video::IVideoDriver *pDriver = pDevice->getVideoDriver();
     irr::video::E_DRIVER_TYPE Type = pDriver->getDriverType();
 
-    switch(Type)
-    {
-      case irr::video::EDT_OPENGL:
-        mOffset = irr::core::vector3df(-0.375f, -0.375f, 0.0f);
-        IrrlichtHelper::IsTrilinearFilterEnabled = false;
-        LOG_NOTE("{IrrIMGUI-Irr} Start Irrlicht High Level GUI renderer in OpenGL mode.\n");
-        break;
+    switch(Type) {
+        case irr::video::EDT_OPENGL:
+            mOffset = irr::core::vector3df(-0.375f, -0.375f, 0.0f);
+            IrrlichtHelper::IsTrilinearFilterEnabled = false;
+            LOG_NOTE("{IrrIMGUI-Irr} Start Irrlicht High Level GUI renderer in OpenGL mode.\n");
+            break;
 
-      case irr::video::EDT_NULL:
-        mOffset = irr::core::vector3df(0.0f, 0.0f, 0.0f);
-        IrrlichtHelper::IsTrilinearFilterEnabled = false;
-        break;
+        case irr::video::EDT_NULL:
+            mOffset = irr::core::vector3df(0.0f, 0.0f, 0.0f);
+            IrrlichtHelper::IsTrilinearFilterEnabled = false;
+            break;
 
-      default:
-        mOffset = irr::core::vector3df(0.0f, 0.0f, 0.0f);
-        LOG_WARNING("{IrrIMGUI-Irr} Start Irrlicht High Level GUI renderer in unknown video mode, this Irrlicht renderer might not be supported!\n");
-        break;
+        default:
+            mOffset = irr::core::vector3df(0.0f, 0.0f, 0.0f);
+            LOG_WARNING("{IrrIMGUI-Irr} Start Irrlicht High Level GUI renderer in unknown video mode, this Irrlicht renderer might not be supported!\n");
+            break;
     }
 
 
     return;
-  }
+}
 
-  CIrrlichtIMGUIDriver::~CIrrlichtIMGUIDriver(void)
-  {
+CIrrlichtIMGUIDriver::~CIrrlichtIMGUIDriver(void) {
     return;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::setupFunctionPointer(void)
-  {
+void CIrrlichtIMGUIDriver::setupFunctionPointer(void) {
     ImGuiIO &rGUIIO  = ImGui::GetIO();
 
     rGUIIO.RenderDrawListsFn = CIrrlichtIMGUIDriver::drawGUIList;
 
     return;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::drawGUIList(ImDrawData * pDrawData)
-  {
+void CIrrlichtIMGUIDriver::drawGUIList(ImDrawData *pDrawData) {
     pDrawData->ScaleClipRects(ImGui::GetIO().DisplayFramebufferScale);
 
-    irr::video::IVideoDriver * const pIrrDriver = getIrrDevice()->getVideoDriver();
+    irr::video::IVideoDriver *const pIrrDriver = getIrrDevice()->getVideoDriver();
     irr::video::SMaterial const CurrentMaterial = pIrrDriver->getMaterial2D();
     pIrrDriver->enableMaterial2D(true);
 
-    for (int CommandListIndex = 0; CommandListIndex < pDrawData->CmdListsCount; CommandListIndex++)
-    {
-      drawCommandList(pDrawData->CmdLists[CommandListIndex]);
+    for(int CommandListIndex = 0; CommandListIndex < pDrawData->CmdListsCount; CommandListIndex++) {
+        drawCommandList(pDrawData->CmdLists[CommandListIndex]);
     }
 
     pIrrDriver->enableMaterial2D(false);
     pIrrDriver->getMaterial2D() = CurrentMaterial;
 
     return;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::drawCommandList(ImDrawList * pCommandList)
-  {
-      // Implemented in the new version
+void CIrrlichtIMGUIDriver::drawCommandList(ImDrawList *pCommandList) {
+    // Implemented in the new version
     return;
-  }
+}
 
-  IGUITexture *CIrrlichtIMGUIDriver::createTexture(EColorFormat const ColorFormat, irr::u8 * const pPixelData, irr::u32 const Width, irr::u32 const Height)
-  {
+IGUITexture *CIrrlichtIMGUIDriver::createTexture(EColorFormat const ColorFormat, irr::u8 *const pPixelData, irr::u32 const Width, irr::u32 const Height) {
     mTextureInstances++;
-    CGUITexture * const pGUITexture = new CGUITexture();
+    CGUITexture *const pGUITexture = new CGUITexture();
 
     pGUITexture->mIsUsingOwnMemory = true;
     pGUITexture->mSourceType       = ETST_RAWDATA;
@@ -188,12 +176,11 @@ namespace IrrlichtHelper
     pGUITexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromRawData(getIrrDevice()->getVideoDriver(), ColorFormat, pPixelData, Width, Height);
 
     return pGUITexture;
-  }
+}
 
-  IGUITexture *CIrrlichtIMGUIDriver::createTexture(irr::video::IImage * const pImage)
-  {
+IGUITexture *CIrrlichtIMGUIDriver::createTexture(irr::video::IImage *const pImage) {
     mTextureInstances++;
-    CGUITexture * const pGUITexture = new CGUITexture();
+    CGUITexture *const pGUITexture = new CGUITexture();
 
     pGUITexture->mIsUsingOwnMemory = true;
     pGUITexture->mSourceType       = ETST_IMAGE;
@@ -202,26 +189,24 @@ namespace IrrlichtHelper
     pGUITexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromImage(getIrrDevice()->getVideoDriver(), pImage);
 
     return pGUITexture;
-  }
+}
 
-  IGUITexture *CIrrlichtIMGUIDriver::createTexture(irr::video::ITexture * pTexture)
-  {
+IGUITexture *CIrrlichtIMGUIDriver::createTexture(irr::video::ITexture *pTexture) {
     mTextureInstances++;
-    CGUITexture * const pGUITexture = new CGUITexture();
+    CGUITexture *const pGUITexture = new CGUITexture();
 
     pGUITexture->mIsUsingOwnMemory = false;
     pGUITexture->mSourceType       = ETST_TEXTURE;
     pGUITexture->mSource.TextureID = pTexture;
     pGUITexture->mIsValid          = true;
-    pGUITexture->mGPUTextureID     = static_cast<ImTextureID>(static_cast<void * const>(pTexture));
+    pGUITexture->mGPUTextureID     = static_cast<ImTextureID>(static_cast<void *const>(pTexture));
 
     return pGUITexture;
-  }
+}
 
-  IGUITexture *CIrrlichtIMGUIDriver::createFontTexture(void)
-  {
+IGUITexture *CIrrlichtIMGUIDriver::createFontTexture(void) {
     mTextureInstances++;
-    CGUITexture * const pGUITexture = new CGUITexture();
+    CGUITexture *const pGUITexture = new CGUITexture();
 
     pGUITexture->mIsUsingOwnMemory = true;
     pGUITexture->mSourceType       = ETST_GUIFONT;
@@ -229,154 +214,125 @@ namespace IrrlichtHelper
     pGUITexture->mIsValid          = true;
     pGUITexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromGUIFont(getIrrDevice()->getVideoDriver());
 
-    void * const pFontTexture = reinterpret_cast<void *>(pGUITexture);
+    void *const pFontTexture = reinterpret_cast<void *>(pGUITexture);
     ImGui::GetIO().Fonts->TexID = pFontTexture;
 
     return pGUITexture;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::updateTexture(IGUITexture * const pGUITexture, EColorFormat const ColorFormat, irr::u8 * const pPixelData, irr::u32 const Width, irr::u32 const Height)
-  {
-    CGUITexture * const pRealTexture = dynamic_cast<CGUITexture * const>(pGUITexture);
+void CIrrlichtIMGUIDriver::updateTexture(IGUITexture *const pGUITexture, EColorFormat const ColorFormat, irr::u8 *const pPixelData, irr::u32 const Width, irr::u32 const Height) {
+    CGUITexture *const pRealTexture = dynamic_cast<CGUITexture *const>(pGUITexture);
     bool IsRecreationNecessary = false;
 
     FASSERT(pRealTexture->mIsValid);
 
-    if (pRealTexture->mIsUsingOwnMemory)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSourceType != ETST_RAWDATA)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSource.RawDataID != pPixelData)
-    {
-      IsRecreationNecessary = true;
+    if(pRealTexture->mIsUsingOwnMemory) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSourceType != ETST_RAWDATA) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSource.RawDataID != pPixelData) {
+        IsRecreationNecessary = true;
     }
 
-    if (IsRecreationNecessary)
-    {
-      IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
+    if(IsRecreationNecessary) {
+        IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
 
-      pRealTexture->mIsUsingOwnMemory = true;
-      pRealTexture->mSourceType       = ETST_RAWDATA;
-      pRealTexture->mSource.RawDataID = pPixelData;
-      pRealTexture->mIsValid          = true;
-      pRealTexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromRawData(getIrrDevice()->getVideoDriver(), ColorFormat, pPixelData, Width, Height);
+        pRealTexture->mIsUsingOwnMemory = true;
+        pRealTexture->mSourceType       = ETST_RAWDATA;
+        pRealTexture->mSource.RawDataID = pPixelData;
+        pRealTexture->mIsValid          = true;
+        pRealTexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromRawData(getIrrDevice()->getVideoDriver(), ColorFormat, pPixelData, Width, Height);
     }
 
     return;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::updateTexture(IGUITexture * const pGUITexture, irr::video::IImage * const pImage)
-  {
-    CGUITexture * const pRealTexture = dynamic_cast<CGUITexture * const>(pGUITexture);
+void CIrrlichtIMGUIDriver::updateTexture(IGUITexture *const pGUITexture, irr::video::IImage *const pImage) {
+    CGUITexture *const pRealTexture = dynamic_cast<CGUITexture *const>(pGUITexture);
     bool IsRecreationNecessary = false;
 
     FASSERT(pRealTexture->mIsValid);
 
-    if (pRealTexture->mIsUsingOwnMemory)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSourceType != ETST_IMAGE)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSource.ImageID != pImage)
-    {
-      IsRecreationNecessary = true;
+    if(pRealTexture->mIsUsingOwnMemory) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSourceType != ETST_IMAGE) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSource.ImageID != pImage) {
+        IsRecreationNecessary = true;
     }
 
-    if (IsRecreationNecessary)
-    {
-      IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
+    if(IsRecreationNecessary) {
+        IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
 
-      pRealTexture->mIsUsingOwnMemory = true;
-      pRealTexture->mSourceType       = ETST_IMAGE;
-      pRealTexture->mSource.ImageID   = pImage;
-      pRealTexture->mIsValid          = true;
-      pRealTexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromImage(getIrrDevice()->getVideoDriver(), pImage);
+        pRealTexture->mIsUsingOwnMemory = true;
+        pRealTexture->mSourceType       = ETST_IMAGE;
+        pRealTexture->mSource.ImageID   = pImage;
+        pRealTexture->mIsValid          = true;
+        pRealTexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromImage(getIrrDevice()->getVideoDriver(), pImage);
     }
 
     return;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::updateTexture(IGUITexture * const pGUITexture, irr::video::ITexture * const pTexture)
-  {
-    CGUITexture * const pRealTexture = dynamic_cast<CGUITexture * const>(pGUITexture);
+void CIrrlichtIMGUIDriver::updateTexture(IGUITexture *const pGUITexture, irr::video::ITexture *const pTexture) {
+    CGUITexture *const pRealTexture = dynamic_cast<CGUITexture *const>(pGUITexture);
     bool IsRecreationNecessary = false;
 
     FASSERT(pRealTexture->mIsValid);
 
-    if (pRealTexture->mIsUsingOwnMemory)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSourceType != ETST_TEXTURE)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSource.TextureID != pTexture)
-    {
-      IsRecreationNecessary = true;
+    if(pRealTexture->mIsUsingOwnMemory) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSourceType != ETST_TEXTURE) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSource.TextureID != pTexture) {
+        IsRecreationNecessary = true;
     }
 
-    if (IsRecreationNecessary)
-    {
-      IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
+    if(IsRecreationNecessary) {
+        IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
 
-      pRealTexture->mIsUsingOwnMemory = false;
-      pRealTexture->mSourceType       = ETST_TEXTURE;
-      pRealTexture->mSource.TextureID = pTexture;
-      pRealTexture->mIsValid          = true;
-      pRealTexture->mGPUTextureID     = static_cast<ImTextureID>(static_cast<void * const>(pTexture));
+        pRealTexture->mIsUsingOwnMemory = false;
+        pRealTexture->mSourceType       = ETST_TEXTURE;
+        pRealTexture->mSource.TextureID = pTexture;
+        pRealTexture->mIsValid          = true;
+        pRealTexture->mGPUTextureID     = static_cast<ImTextureID>(static_cast<void *const>(pTexture));
     }
 
     return;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::updateFontTexture(IGUITexture * const pGUITexture)
-  {
-    CGUITexture * const pRealTexture = dynamic_cast<CGUITexture * const>(pGUITexture);
+void CIrrlichtIMGUIDriver::updateFontTexture(IGUITexture *const pGUITexture) {
+    CGUITexture *const pRealTexture = dynamic_cast<CGUITexture *const>(pGUITexture);
     bool IsRecreationNecessary = false;
 
     FASSERT(pRealTexture->mIsValid);
 
-    if (pRealTexture->mIsUsingOwnMemory)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSourceType != ETST_GUIFONT)
-    {
-      IsRecreationNecessary = true;
-    }
-    else if (pRealTexture->mSource.GUIFontID != IrrlichtHelper::IMGUI_FONT_ID)
-    {
-      IsRecreationNecessary = true;
+    if(pRealTexture->mIsUsingOwnMemory) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSourceType != ETST_GUIFONT) {
+        IsRecreationNecessary = true;
+    } else if(pRealTexture->mSource.GUIFontID != IrrlichtHelper::IMGUI_FONT_ID) {
+        IsRecreationNecessary = true;
     }
 
-    if (IsRecreationNecessary)
-    {
-      IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
+    if(IsRecreationNecessary) {
+        IrrlichtHelper::deleteTextureID(getIrrDevice()->getVideoDriver(), pRealTexture);
 
-      pRealTexture->mIsUsingOwnMemory = true;
-      pRealTexture->mSourceType       = ETST_GUIFONT;
-      pRealTexture->mSource.GUIFontID = IrrlichtHelper::IMGUI_FONT_ID;
-      pRealTexture->mIsValid          = true;
-      pRealTexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromGUIFont(getIrrDevice()->getVideoDriver());
+        pRealTexture->mIsUsingOwnMemory = true;
+        pRealTexture->mSourceType       = ETST_GUIFONT;
+        pRealTexture->mSource.GUIFontID = IrrlichtHelper::IMGUI_FONT_ID;
+        pRealTexture->mIsValid          = true;
+        pRealTexture->mGPUTextureID     = IrrlichtHelper::copyTextureIDFromGUIFont(getIrrDevice()->getVideoDriver());
 
-      void * const pFontTexture = reinterpret_cast<void *>(pGUITexture);
-      ImGui::GetIO().Fonts->TexID = pFontTexture;
+        void *const pFontTexture = reinterpret_cast<void *>(pGUITexture);
+        ImGui::GetIO().Fonts->TexID = pFontTexture;
     }
 
     return;
-  }
+}
 
-  void CIrrlichtIMGUIDriver::deleteTexture(IGUITexture * const pGUITexture)
-  {
-    CGUITexture * const pRealTexture = dynamic_cast<CGUITexture * const>(pGUITexture);
+void CIrrlichtIMGUIDriver::deleteTexture(IGUITexture *const pGUITexture) {
+    CGUITexture *const pRealTexture = dynamic_cast<CGUITexture *const>(pGUITexture);
 
     FASSERT(pRealTexture->mIsValid);
 
@@ -385,15 +341,13 @@ namespace IrrlichtHelper
 
     mTextureInstances--;
     return;
-  }
+}
 
 
-namespace IrrlichtHelper
-{
+namespace IrrlichtHelper {
 
 
-  irr::video::SColor getColorFromImGuiColor(irr::u32 const ImGuiColor)
-  {
+irr::video::SColor getColorFromImGuiColor(irr::u32 const ImGuiColor) {
     ImColor const Color(ImGuiColor);
 
     irr::u8 const Red   = static_cast<irr::u8>(Color.Value.x * 255);
@@ -402,51 +356,47 @@ namespace IrrlichtHelper
     irr::u8 const Alpha = static_cast<irr::u8>(Color.Value.w * 255);
 
     return irr::video::SColor(Alpha, Red, Green, Blue);
-  }
+}
 
-  ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver * const pIrrDriver, EColorFormat const ColorFormat, irr::u8 * const pPixelData, irr::u32 const Width, irr::u32 const Height)
-  {
+ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *const pIrrDriver, EColorFormat const ColorFormat, irr::u8 *const pPixelData, irr::u32 const Width, irr::u32 const Height) {
 
-    irr::u32 * pImageData = nullptr;
+    irr::u32 *pImageData = nullptr;
     bool IsTempMemoryUsed = false;
 
     // decide if we need to translate the color or not
-    switch (ColorFormat)
-    {
-      case ECF_A8R8G8B8:
-        pImageData       = reinterpret_cast<irr::u32 *>(pPixelData);
-        IsTempMemoryUsed = false;
-        break;
+    switch(ColorFormat) {
+        case ECF_A8R8G8B8:
+            pImageData       = reinterpret_cast<irr::u32 *>(pPixelData);
+            IsTempMemoryUsed = false;
+            break;
 
-      case ECF_R8G8B8A8:
-        pImageData       = reinterpret_cast<irr::u32 *>(pPixelData);
-        IsTempMemoryUsed = false;
+        case ECF_R8G8B8A8:
+            pImageData       = reinterpret_cast<irr::u32 *>(pPixelData);
+            IsTempMemoryUsed = false;
 
-        for (irr::u32 X = 0; X < (Width * Height); X++)
-        {
-          irr::video::SColor Color = getColorFromImGuiColor(pImageData[X]);
-          Color.getData(&pImageData[X], irr::video::ECF_A8R8G8B8);
-        }
+            for(irr::u32 X = 0; X < (Width * Height); X++) {
+                irr::video::SColor Color = getColorFromImGuiColor(pImageData[X]);
+                Color.getData(&pImageData[X], irr::video::ECF_A8R8G8B8);
+            }
 
-        break;
+            break;
 
-      case ECF_A8:
-        pImageData       = new irr::u32[Width * Height];
-        IsTempMemoryUsed = true;
+        case ECF_A8:
+            pImageData       = new irr::u32[Width * Height];
+            IsTempMemoryUsed = true;
 
-        for (irr::u32 X = 0; X < (Width * Height); X++)
-        {
-          // set only Alpha
-          irr::video::SColor Color(pPixelData[X], 255, 255, 255);
-          Color.getData(&pImageData[X], irr::video::ECF_A8R8G8B8);
-        }
+            for(irr::u32 X = 0; X < (Width * Height); X++) {
+                // set only Alpha
+                irr::video::SColor Color(pPixelData[X], 255, 255, 255);
+                Color.getData(&pImageData[X], irr::video::ECF_A8R8G8B8);
+            }
 
-        break;
+            break;
 
-      default:
-        LOG_ERROR("Unknown ColorFormat "<<ColorFormat<<"!\n");
-        FASSERT(false);
-        break;
+        default:
+            LOG_ERROR("Unknown ColorFormat " << ColorFormat << "!\n");
+            FASSERT(false);
+            break;
     }
 
     // do not generate mipmaps for font textures
@@ -454,35 +404,33 @@ namespace IrrlichtHelper
 
     // create image object from raw data
     irr::core::dimension2d<irr::u32> const Size(Width, Height);
-    irr::video::IImage * const pImage = pIrrDriver->createImageFromData(irr::video::ECF_A8R8G8B8, Size, pImageData);
+    irr::video::IImage *const pImage = pIrrDriver->createImageFromData(irr::video::ECF_A8R8G8B8, Size, pImageData);
 
     // create unique texture name for Irrlicht
     irr::io::path const TextureName = "IrrIMGUIRaw" + TextureCreationID;
     TextureCreationID++;
 
     // create texture object
-    irr::video::ITexture * const pTexture = pIrrDriver->addTexture(TextureName, pImage);
-    ImTextureID const TextureID = static_cast<ImTextureID>(static_cast<void * const>(pTexture));
+    irr::video::ITexture *const pTexture = pIrrDriver->addTexture(TextureName, pImage);
+    ImTextureID const TextureID = static_cast<ImTextureID>(static_cast<void *const>(pTexture));
 
     pIrrDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 
     // delete image object
     pImage->drop();
 
-    if (IsTempMemoryUsed)
-    {
-      delete[] pImageData;
+    if(IsTempMemoryUsed) {
+        delete[] pImageData;
     }
 
     LOG_NOTE("{IrrIMGUI-Irr} Create ITexture object from Raw Data. Handle: " << std::hex << TextureID << "\n");
 
     return TextureID;
-  }
+}
 
-  ImTextureID copyTextureIDFromGUIFont(irr::video::IVideoDriver * const pIrrDriver)
-  {
+ImTextureID copyTextureIDFromGUIFont(irr::video::IVideoDriver *const pIrrDriver) {
     // Get Font Texture from IMGUI system.
-    irr::u8 * pPixelData;
+    irr::u8 *pPixelData;
     int Width, Height;
     ImGui::GetIO().Fonts->GetTexDataAsAlpha8(&pPixelData, &Width, &Height);
 
@@ -492,10 +440,9 @@ namespace IrrlichtHelper
     ImGui::GetIO().Fonts->ClearTexData();
 
     return FontTexture;
-  }
+}
 
-  ImTextureID copyTextureIDFromImage(irr::video::IVideoDriver * const pIrrDriver, irr::video::IImage * const pImage)
-  {
+ImTextureID copyTextureIDFromImage(irr::video::IVideoDriver *const pIrrDriver, irr::video::IImage *const pImage) {
     // do not generate mipmaps for font textures
     pIrrDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
 
@@ -504,42 +451,39 @@ namespace IrrlichtHelper
     TextureCreationID++;
 
     // create texture object
-    irr::video::ITexture * const pTexture = pIrrDriver->addTexture(TextureName, pImage);
-    ImTextureID const TextureID = static_cast<ImTextureID>(static_cast<void * const>(pTexture));
+    irr::video::ITexture *const pTexture = pIrrDriver->addTexture(TextureName, pImage);
+    ImTextureID const TextureID = static_cast<ImTextureID>(static_cast<void *const>(pTexture));
 
     pIrrDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 
     return TextureID;
-  }
+}
 
-  void deleteTextureID(irr::video::IVideoDriver * const pIrrDriver, CGUITexture * const pGUITexture)
-  {
-    if (pGUITexture->mIsUsingOwnMemory)
-    {
-      LOG_NOTE("{IrrIMGUI-Irr} Delete ITexture memory. Handle: " << std::hex << pGUITexture->mGPUTextureID << "\n");
-      irr::video::ITexture * const pIrrlichtTexture = reinterpret_cast<irr::video::ITexture * const>(pGUITexture->mGPUTextureID);
+void deleteTextureID(irr::video::IVideoDriver *const pIrrDriver, CGUITexture *const pGUITexture) {
+    if(pGUITexture->mIsUsingOwnMemory) {
+        LOG_NOTE("{IrrIMGUI-Irr} Delete ITexture memory. Handle: " << std::hex << pGUITexture->mGPUTextureID << "\n");
+        irr::video::ITexture *const pIrrlichtTexture = reinterpret_cast<irr::video::ITexture *const>(pGUITexture->mGPUTextureID);
 
-      pIrrDriver->removeTexture(pIrrlichtTexture);
+        pIrrDriver->removeTexture(pIrrlichtTexture);
 
-      pGUITexture->mIsUsingOwnMemory = false;
-      pGUITexture->mGPUTextureID = nullptr;
+        pGUITexture->mIsUsingOwnMemory = false;
+        pGUITexture->mGPUTextureID = nullptr;
     }
 
     pGUITexture->mIsValid = false;
     pGUITexture->mSourceType = ETST_UNKNOWN;
 
     return;
-  }
+}
 
-  void disableClippingRect(irr::video::IVideoDriver * const pIrrDriver)
-  {
+void disableClippingRect(irr::video::IVideoDriver *const pIrrDriver) {
     pIrrDriver->enableClipPlane(0, false);
     pIrrDriver->enableClipPlane(1, false);
     pIrrDriver->enableClipPlane(2, false);
     pIrrDriver->enableClipPlane(3, false);
 
     return;
-  }
+}
 }
 }
 }

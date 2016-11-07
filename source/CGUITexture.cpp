@@ -31,24 +31,20 @@
 // module includes
 #include "private/CGUITexture.h"
 
-namespace IrrIMGUI
-{
-namespace Private
-{
+namespace IrrIMGUI {
+namespace Private {
 
-  CGUITexture::CGUITexture(void):
+CGUITexture::CGUITexture(void):
     mIsUsingOwnMemory(false),
     mSourceType(ETST_UNKNOWN),
     mIsValid(true),
-    mGPUTextureID(nullptr)
-  {
+    mGPUTextureID(nullptr) {
     return;
-  }
+}
 
-  CGUITexture::~CGUITexture(void)
-  {
+CGUITexture::~CGUITexture(void) {
     return;
-  }
+}
 
 }
 }

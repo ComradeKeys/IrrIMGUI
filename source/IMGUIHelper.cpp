@@ -35,26 +35,23 @@
 #include <IrrIMGUI/IMGUIHelper.h>
 #include "private/CGUITexture.h"
 
-namespace IrrIMGUI
-{
-  /// @brief Updates the IMGUI screen size.
-  /// @param pDevice Is a pointer to an Irrlicht device.
-  static void updateScreenSize(irr::IrrlichtDevice * const pDevice)
-  {
-    ImGuiIO& rGUIIO = ImGui::GetIO();
+namespace IrrIMGUI {
+/// @brief Updates the IMGUI screen size.
+/// @param pDevice Is a pointer to an Irrlicht device.
+static void updateScreenSize(irr::IrrlichtDevice *const pDevice) {
+    ImGuiIO &rGUIIO = ImGui::GetIO();
 
     irr::core::dimension2d<irr::u32> const &rRenderTargetSize = pDevice->getVideoDriver()->getCurrentRenderTargetSize();
     rGUIIO.DisplaySize = ImVec2(static_cast<float>(rRenderTargetSize.Width), static_cast<float>(rRenderTargetSize.Height));
 
     return;
-  }
+}
 
-  /// @brief Updated the IMGUI timer.
-  /// @param pDevice   Is a pointer to an Irrlicht device.
-  /// @param pLastTime Is a pointer to a variable that stores the timer value from the last update.
-  static void updateTimer(irr::IrrlichtDevice * const pDevice, irr::f32 * const pLastTime)
-  {
-    ImGuiIO& rGUIIO = ImGui::GetIO();
+/// @brief Updated the IMGUI timer.
+/// @param pDevice   Is a pointer to an Irrlicht device.
+/// @param pLastTime Is a pointer to a variable that stores the timer value from the last update.
+static void updateTimer(irr::IrrlichtDevice *const pDevice, irr::f32 *const pLastTime) {
+    ImGuiIO &rGUIIO = ImGui::GetIO();
 
     irr::f32 const CurrentTime = static_cast<float>(pDevice->getTimer()->getTime()) / 1000.0f;
     irr::f32 const DeltaTime   = CurrentTime - *pLastTime;
@@ -63,19 +60,17 @@ namespace IrrIMGUI
     rGUIIO.DeltaTime = ((float)(DeltaTime > 0.0f ? DeltaTime : 0.00001f));
 
     return;
-  }
+}
 
-  /// @brief Updates the Mouse events from IMGUI.
-  /// @param pEventStorage Is a pointer to a CIMGUIEventStorage object.
-  static void updateMouse(CIMGUIEventStorage * const pEventStorage)
-  {
-    ImGuiIO& rGUIIO = ImGui::GetIO();
+/// @brief Updates the Mouse events from IMGUI.
+/// @param pEventStorage Is a pointer to a CIMGUIEventStorage object.
+static void updateMouse(CIMGUIEventStorage *const pEventStorage) {
+    ImGuiIO &rGUIIO = ImGui::GetIO();
 
-    enum MouseButtons
-    {
-      Left   = 0,
-      Right  = 1,
-      Middle = 2,
+    enum MouseButtons {
+        Left   = 0,
+        Right  = 1,
+        Middle = 2,
     };
     rGUIIO.MousePos          = ImVec2(static_cast<float>(pEventStorage->mMousePositionX), static_cast<float>(pEventStorage->mMousePositionY));
     rGUIIO.MouseDown[Left]   = pEventStorage->mIsLeftMouseButtonPressed;
@@ -85,13 +80,12 @@ namespace IrrIMGUI
     pEventStorage->mMouseWheelPosition = 0.0f;
 
     return;
-  }
+}
 
-  /// @brief Updates the Keyboard events from IMGUI.
-  /// @param pEventStorage Is a pointer to a CIMGUIEventStorage object.
-  static void updateKeyboard(CIMGUIEventStorage * const pEventStorage)
-  {
-    ImGuiIO& rGUIIO = ImGui::GetIO();
+/// @brief Updates the Keyboard events from IMGUI.
+/// @param pEventStorage Is a pointer to a CIMGUIEventStorage object.
+static void updateKeyboard(CIMGUIEventStorage *const pEventStorage) {
+    ImGuiIO &rGUIIO = ImGui::GetIO();
 
     rGUIIO.KeysDown[irr::KEY_TAB]    = pEventStorage->mTabPressed;
     rGUIIO.KeysDown[irr::KEY_LEFT]   = pEventStorage->mLeftPressed;
@@ -116,24 +110,21 @@ namespace IrrIMGUI
     rGUIIO.KeyShift                  = pEventStorage->mShiftPressed;
     rGUIIO.KeyAlt                    = pEventStorage->mAltPressed;
 
-    while(!pEventStorage->mCharFifo.isEmpty())
-    {
-      rGUIIO.AddInputCharacter(pEventStorage->mCharFifo.getChar());
+    while(!pEventStorage->mCharFifo.isEmpty()) {
+        rGUIIO.AddInputCharacter(pEventStorage->mCharFifo.getChar());
     }
 
     return;
-  }
+}
 
-  void updateIMGUIFrameValues(irr::IrrlichtDevice * const pDevice,  CIMGUIEventStorage * const pEventStorage, irr::f32 * const pLastTime)
-  {
+void updateIMGUIFrameValues(irr::IrrlichtDevice *const pDevice,  CIMGUIEventStorage *const pEventStorage, irr::f32 *const pLastTime) {
     updateScreenSize(pDevice);
     updateTimer(pDevice, pLastTime);
-    if (pEventStorage)
-    {
-      updateMouse(pEventStorage);
-      updateKeyboard(pEventStorage);
+    if(pEventStorage) {
+        updateMouse(pEventStorage);
+        updateKeyboard(pEventStorage);
     }
-  }
+}
 
 }
 

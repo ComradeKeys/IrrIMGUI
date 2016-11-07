@@ -44,20 +44,17 @@
  * @{
  */
 
-namespace IrrIMGUI
-{
-namespace Private
-{
+namespace IrrIMGUI {
+namespace Private {
 
-  IIMGUIDriver *        IIMGUIDriver::mpInstance = nullptr;
-  irr::u32              IIMGUIDriver::mInstances = 0;
-  irr::IrrlichtDevice * IIMGUIDriver::mpDevice   = nullptr;
-  SIMGUISettings        IIMGUIDriver::mSettings;
-  IGUITexture         * IIMGUIDriver::mpFontTexture = nullptr;
-  irr::u32              IIMGUIDriver::mTextureInstances = 0;
+IIMGUIDriver         *IIMGUIDriver::mpInstance = nullptr;
+irr::u32              IIMGUIDriver::mInstances = 0;
+irr::IrrlichtDevice *IIMGUIDriver::mpDevice   = nullptr;
+SIMGUISettings        IIMGUIDriver::mSettings;
+IGUITexture          *IIMGUIDriver::mpFontTexture = nullptr;
+irr::u32              IIMGUIDriver::mTextureInstances = 0;
 
-  IIMGUIDriver::IIMGUIDriver(irr::IrrlichtDevice * const pDevice)
-  {
+IIMGUIDriver::IIMGUIDriver(irr::IrrlichtDevice *const pDevice) {
     LOG_NOTE("{IrrIMGUI} Create Singleton Instance of IIMGUIDriver.\n");
     mInstances++;
     mTextureInstances = 0;
@@ -72,18 +69,15 @@ namespace Private
     updateSettings();
 
     return;
-  }
+}
 
-  IIMGUIDriver::~IIMGUIDriver(void)
-  {
-    if (mTextureInstances != 0)
-    {
-      LOG_ERROR("Not all images created with CIMGUIHandle::createTextureFromImage(...) have been deleted with CIMGUIHandle::deleteTexture(...). There are " << mTextureInstances << " images left!\n");
+IIMGUIDriver::~IIMGUIDriver(void) {
+    if(mTextureInstances != 0) {
+        LOG_ERROR("Not all images created with CIMGUIHandle::createTextureFromImage(...) have been deleted with CIMGUIHandle::deleteTexture(...). There are " << mTextureInstances << " images left!\n");
     }
 
-    if (mpFontTexture != nullptr)
-    {
-      LOG_ERROR("The Font Texture has not been deleted!\n");
+    if(mpFontTexture != nullptr) {
+        LOG_ERROR("The Font Texture has not been deleted!\n");
     }
 
     ImGui::GetIO().Fonts->Clear();
@@ -91,34 +85,31 @@ namespace Private
 
     mpDevice->drop();
     return;
-  }
+}
 
-  IIMGUIDriver * IIMGUIDriver::getInstance(irr::IrrlichtDevice * const pDevice)
-  {
+IIMGUIDriver *IIMGUIDriver::getInstance(irr::IrrlichtDevice *const pDevice) {
 
-    if (mpInstance == nullptr)
-    {
+    if(mpInstance == nullptr) {
 #ifdef _IRRIMGUI_NATIVE_OPENGL_
-      irr::video::IVideoDriver * pDriver = pDevice->getVideoDriver();
-      irr::video::E_DRIVER_TYPE Type = pDriver->getDriverType();
+        irr::video::IVideoDriver *pDriver = pDevice->getVideoDriver();
+        irr::video::E_DRIVER_TYPE Type = pDriver->getDriverType();
 
-      switch(Type)
-      {
-        case irr::video::EDT_NULL: // for unit testing
-        case irr::video::EDT_OPENGL:
-          mpInstance = new Driver::COpenGLIMGUIDriver(pDevice);
-          mpFontTexture = mpInstance->createFontTexture();
-          break;
+        switch(Type) {
+            case irr::video::EDT_NULL: // for unit testing
+            case irr::video::EDT_OPENGL:
+                mpInstance = new Driver::COpenGLIMGUIDriver(pDevice);
+                mpFontTexture = mpInstance->createFontTexture();
+                break;
 
-        default:
-          LOG_ERROR("Unknown driver type" << Type << "\n");
-          FASSERT(false);
-          break;
-      }
+            default:
+                LOG_ERROR("Unknown driver type" << Type << "\n");
+                FASSERT(false);
+                break;
+        }
 #else
 
-      mpInstance = new Driver::CIrrlichtIMGUIDriver(pDevice);
-      mpFontTexture = mpInstance->createFontTexture();
+        mpInstance = new Driver::CIrrlichtIMGUIDriver(pDevice);
+        mpFontTexture = mpInstance->createFontTexture();
 
 #endif
 
@@ -127,96 +118,82 @@ namespace Private
     ASSERT(mpInstance != nullptr);
 
     return mpInstance;
-  }
+}
 
-  bool IIMGUIDriver::deleteInstance(void)
-  {
+bool IIMGUIDriver::deleteInstance(void) {
     bool WasDeleted = false;
 
-    if (mpInstance != nullptr)
-    {
-      LOG_NOTE("{IrrIMGUI} Delete Singleton Instance of IIMGUIDriver.\n");
+    if(mpInstance != nullptr) {
+        LOG_NOTE("{IrrIMGUI} Delete Singleton Instance of IIMGUIDriver.\n");
 
-      // delete font texture
-      mpInstance->deleteTexture(mpFontTexture);
-      mpFontTexture = nullptr;
+        // delete font texture
+        mpInstance->deleteTexture(mpFontTexture);
+        mpFontTexture = nullptr;
 
-      // delete instance
-      delete(mpInstance);
-      mpInstance = nullptr;
-      mInstances = 0;
+        // delete instance
+        delete(mpInstance);
+        mpInstance = nullptr;
+        mInstances = 0;
 
-      WasDeleted = true;
+        WasDeleted = true;
 
-      if (ImGui::GetIO().MetricsAllocs != 0)
-      {
-        if (mSettings.mIsIMGUIMemoryAllocationTrackingEnabled)
-        {
-          LOG_ERROR("{IrrIMGUI} There are " << std::dec << ImGui::GetIO().MetricsAllocs << " allocated memory blocks that have not been deallocated so far!" << std::endl);
+        if(ImGui::GetIO().MetricsAllocs != 0) {
+            if(mSettings.mIsIMGUIMemoryAllocationTrackingEnabled) {
+                LOG_ERROR("{IrrIMGUI} There are " << std::dec << ImGui::GetIO().MetricsAllocs << " allocated memory blocks that have not been deallocated so far!" << std::endl);
+            }
         }
-      }
     }
 
     return WasDeleted;
-  }
+}
 
-  irr::IrrlichtDevice * IIMGUIDriver::getIrrDevice(void)
-  {
+irr::IrrlichtDevice *IIMGUIDriver::getIrrDevice(void) {
     ASSERT(mpDevice != nullptr);
     return mpDevice;
-  }
+}
 
-  SIMGUISettings const &IIMGUIDriver::getSettings(void)
-  {
+SIMGUISettings const &IIMGUIDriver::getSettings(void) {
     return mSettings;
-  }
+}
 
-  void IIMGUIDriver::setSettings(SIMGUISettings const &rSettings)
-  {
+void IIMGUIDriver::setSettings(SIMGUISettings const &rSettings) {
     mSettings = rSettings;
     updateSettings();
 
     return;
-  }
+}
 
-  void IIMGUIDriver::updateSettings(void)
-  {
+void IIMGUIDriver::updateSettings(void) {
     ImGuiIO &rGUIIO = ImGui::GetIO();
-    if (mSettings.mIsGUIMouseCursorEnabled)
-    {
-      rGUIIO.MouseDrawCursor = true;
-      mpDevice->getCursorControl()->setVisible(false);
-    }
-    else
-    {
-      rGUIIO.MouseDrawCursor = false;
-      mpDevice->getCursorControl()->setVisible(true);
+    if(mSettings.mIsGUIMouseCursorEnabled) {
+        rGUIIO.MouseDrawCursor = true;
+        mpDevice->getCursorControl()->setVisible(false);
+    } else {
+        rGUIIO.MouseDrawCursor = false;
+        mpDevice->getCursorControl()->setVisible(true);
     }
 
     return;
-  }
+}
 
-  void IIMGUIDriver::setupMouseControl(void)
-  {
+void IIMGUIDriver::setupMouseControl(void) {
     // setup standard values
     ImGuiIO &rGUIIO = ImGui::GetIO();
 
-    for (int i = 0; i < Const::NumberOfMouseButtons; i++)
-    {
-      rGUIIO.MouseClicked[i]          = false;
-      rGUIIO.MouseDoubleClicked[i]    = false;
-      rGUIIO.MouseDown[i]             = false;
-      rGUIIO.MouseClickedTime[i]      = -FLT_MAX;
-      rGUIIO.MouseDownDurationPrev[i] = -1.0f;
-      rGUIIO.MouseDownDuration[i]     = -1.0f;
+    for(int i = 0; i < Const::NumberOfMouseButtons; i++) {
+        rGUIIO.MouseClicked[i]          = false;
+        rGUIIO.MouseDoubleClicked[i]    = false;
+        rGUIIO.MouseDown[i]             = false;
+        rGUIIO.MouseClickedTime[i]      = -FLT_MAX;
+        rGUIIO.MouseDownDurationPrev[i] = -1.0f;
+        rGUIIO.MouseDownDuration[i]     = -1.0f;
     }
     rGUIIO.MouseWheel = 0.0f;
 
     return;
-  }
+}
 
-  void IIMGUIDriver::setupKeyControl(void)
-  {
+void IIMGUIDriver::setupKeyControl(void) {
     ImGuiIO &rGUIIO = ImGui::GetIO();
 
     rGUIIO.KeyMap[ImGuiKey_Tab]        = irr::KEY_TAB;
@@ -238,33 +215,29 @@ namespace Private
     rGUIIO.KeyMap[ImGuiKey_X]          = irr::KEY_KEY_X;
     rGUIIO.KeyMap[ImGuiKey_Y]          = irr::KEY_KEY_Y;
     rGUIIO.KeyMap[ImGuiKey_Z]          = irr::KEY_KEY_Z;
-  }
+}
 
-  void IIMGUIDriver::compileFonts(void)
-  {
+void IIMGUIDriver::compileFonts(void) {
     FASSERT(mpFontTexture != nullptr);
 
     updateFontTexture(mpFontTexture);
 
     return;
-  }
+}
 
-  /// @brief An helper class, that deletes the CIMGUIDriver instance when the program is closed and no other source has deleted it.
-  class CIMGUIDriverDeleteHelper
-  {
-    public:
-      /// @brief Destructor tries to delete the Instance of CIMGUIDriver. If an instance was deleted, it shows a warning.
-      ~CIMGUIDriverDeleteHelper(void)
-      {
-        if (IrrIMGUI::Private::IIMGUIDriver::deleteInstance())
-        {
-          LOG_WARNING("Forced deletion of Singleton Instance of IIMGUIDriver!\n");
+/// @brief An helper class, that deletes the CIMGUIDriver instance when the program is closed and no other source has deleted it.
+class CIMGUIDriverDeleteHelper {
+public:
+    /// @brief Destructor tries to delete the Instance of CIMGUIDriver. If an instance was deleted, it shows a warning.
+    ~CIMGUIDriverDeleteHelper(void) {
+        if(IrrIMGUI::Private::IIMGUIDriver::deleteInstance()) {
+            LOG_WARNING("Forced deletion of Singleton Instance of IIMGUIDriver!\n");
         }
-      }
-  };
+    }
+};
 
-  // @brief Ensures that a driver is deleted at the end of program.
-  static CIMGUIDriverDeleteHelper IMGUIDriverDeleteHelper;
+// @brief Ensures that a driver is deleted at the end of program.
+static CIMGUIDriverDeleteHelper IMGUIDriverDeleteHelper;
 
 }
 }

@@ -32,32 +32,25 @@
 #include <IrrIMGUI/Tools/CBasicMemoryLeakDetection.h>
 #include "private/IrrIMGUIDebug_priv.h"
 
-namespace IrrIMGUI
-{
-namespace Tools
-{
+namespace IrrIMGUI {
+namespace Tools {
 
-  CBasicMemoryLeakDetection::CBasicMemoryLeakDetection(void)
-  {
+CBasicMemoryLeakDetection::CBasicMemoryLeakDetection(void) {
     resetMemoryState();
     return;
-  }
+}
 
-  CBasicMemoryLeakDetection::~CBasicMemoryLeakDetection(void)
-  {
-    if (!mWasMemoryChecked)
-    {
-      int const MemoryLeak = compareMemoryState();
-      if (MemoryLeak != 0)
-      {
-        LOG_ERROR("Memory Leak detected: " << MemoryLeak << " Bytes has been allocated but not freed-up!");
-      }
+CBasicMemoryLeakDetection::~CBasicMemoryLeakDetection(void) {
+    if(!mWasMemoryChecked) {
+        int const MemoryLeak = compareMemoryState();
+        if(MemoryLeak != 0) {
+            LOG_ERROR("Memory Leak detected: " << MemoryLeak << " Bytes has been allocated but not freed-up!");
+        }
     }
     return;
-  }
+}
 
-  int CBasicMemoryLeakDetection::compareMemoryState(void)
-  {
+int CBasicMemoryLeakDetection::compareMemoryState(void) {
     int MemoryLeak = 0;
 
 #ifdef _ENABLE_MEMORY_LEAK_DETECTION_
@@ -85,10 +78,9 @@ namespace Tools
     mWasMemoryChecked = true;
 
     return MemoryLeak;
-  }
+}
 
-  void CBasicMemoryLeakDetection::resetMemoryState(void)
-  {
+void CBasicMemoryLeakDetection::resetMemoryState(void) {
 #ifdef _ENABLE_MEMORY_LEAK_DETECTION_
     _CrtMemCheckpoint(&mMemoryState);
 #endif // _ENABLE_MEMORY_LEAK_DETECTION_
@@ -96,7 +88,7 @@ namespace Tools
     mWasMemoryChecked = false;
 
     return;
-  }
+}
 
 }
 }

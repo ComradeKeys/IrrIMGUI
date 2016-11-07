@@ -17,8 +17,9 @@ astyle --style=attach \
     --lineend=linux \
     source/*.cpp \
     source/*.h \
-    includes/*.h
+    examples/*.cpp \
+    includes/IrrIMGUI/*.h
 
-rm -rf src/client/*.orig src/server/*.orig src/*.orig src/gui/*.orig src/comp/*.orig src/sys/*.orig
+rm -rf source/*.orig includes/IrrIMGUI/*.orig
 
 echo "I CAN'T READ THAT CODE!!!"

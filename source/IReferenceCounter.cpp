@@ -36,51 +36,41 @@
  * @addtogroup IrrIMGUI
  * @{
  */
-namespace IrrIMGUI
-{
-  IReferenceCounter::IReferenceCounter(void):
-      mReferences(1)
-  {
+namespace IrrIMGUI {
+IReferenceCounter::IReferenceCounter(void):
+    mReferences(1) {
     return;
-  }
+}
 
-  IReferenceCounter::~IReferenceCounter(void)
-  {
-    if (mReferences != 1)
-    {
-      LOG_ERROR("An object with counted references is destroyed, but there are still references in use!\n");
-      LOG_ERROR(" * object address: " << std::hex << this << "\n");
-      LOG_ERROR(" * object references in use: " << std::hex << (mReferences-1) << "\n");
+IReferenceCounter::~IReferenceCounter(void) {
+    if(mReferences != 1) {
+        LOG_ERROR("An object with counted references is destroyed, but there are still references in use!\n");
+        LOG_ERROR(" * object address: " << std::hex << this << "\n");
+        LOG_ERROR(" * object references in use: " << std::hex << (mReferences - 1) << "\n");
     }
 
     return;
-  }
+}
 
-  void IReferenceCounter::grab(void)
-  {
+void IReferenceCounter::grab(void) {
     mReferences++;
     return;
-  }
+}
 
-  void IReferenceCounter::drop(void)
-  {
+void IReferenceCounter::drop(void) {
 
-    if (mReferences == 1)
-    {
-      delete this;
-    }
-    else
-    {
-      mReferences--;
+    if(mReferences == 1) {
+        delete this;
+    } else {
+        mReferences--;
     }
 
     return;
-  }
+}
 
-  irr::u32 IReferenceCounter::getReferenceCount(void) const
-  {
+irr::u32 IReferenceCounter::getReferenceCount(void) const {
     return mReferences;
-  }
+}
 
 }
 

@@ -83,7 +83,6 @@ void runScene(void)
       pDriver->getTexture("../../media/Background.jpg"),
       pDriver->getTexture("../../media/Background.jpg"),
       pDriver->getTexture("../../media/Background.jpg"));
- // pDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 
   // Create Planet object
   scene::IMeshSceneNode * const pMoon = pSceneManager->addSphereSceneNode(5.0f, 10);
@@ -105,6 +104,7 @@ void runScene(void)
     pDriver->beginScene(true, true, irr::video::SColor(255,100,101,140));
     ImGui_ImplIrrlicht_NewFrame(pDevice);
     pGUI->startGUI();
+
     ImGui::Begin("Picture sources", NULL, ImGuiWindowFlags_ShowBorders);
     ImGui::Text("Background picture from Manuel Tellur / pixelio.de (Image-ID: 642831)");
     ImGui::Text("Moon (Phobos) texture from http://nasa3d.arc.nasa.gov");
@@ -142,7 +142,7 @@ void runScene(void)
   }
 
   pDevice->drop();
-//   pGUI->drop();
+  pGUI->drop();
 
 }
 
