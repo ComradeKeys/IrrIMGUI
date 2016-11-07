@@ -6,6 +6,7 @@ Known Issues
 ============
 - Picture example does not work properly, font texture is loaded instead of image
 - The widgets are not being clipped from the bottom of the window
+- Double rendering example does not work, we have to figure out how IrrlichtBAW does this
 - Thread safe compiling does not work; you have to run make twice to get the examples built
 
 Thank you
