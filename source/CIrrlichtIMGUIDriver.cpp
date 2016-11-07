@@ -151,12 +151,11 @@ void CIrrlichtIMGUIDriver::setupFunctionPointer(void) {
     ImGuiIO &rGUIIO  = ImGui::GetIO();
 
     rGUIIO.RenderDrawListsFn = CIrrlichtIMGUIDriver::drawGUIList;
-puts("Better draw function has been set");
     return;
 }
 
 void CIrrlichtIMGUIDriver::drawGUIList(ImDrawData *pDrawData) {
-    puts("Better draw list being called");
+
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     ImGuiIO &io = ImGui::GetIO();
     int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);

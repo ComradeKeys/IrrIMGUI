@@ -85,10 +85,9 @@ void runScene(void)
       pDriver->getTexture("../../media/Background.jpg"),
       pDriver->getTexture("../../media/Background.jpg"),
       pMainScreen);
-  pDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 
   // Create Planet object
-  scene::IMeshSceneNode * const pMoon = pSceneManager->addSphereSceneNode(5.0f, 128, pMoonScreen);
+  scene::IMeshSceneNode * const pMoon = pSceneManager->addSphereSceneNode(5.0f, 10, pMoonScreen);
   FASSERT(pMoon);
   pMoon->setPosition(irr::core::vector3df(0,0,25));
   pMoon->setMaterialTexture(0, pDriver->getTexture("../../media/Phobos.jpg"));
