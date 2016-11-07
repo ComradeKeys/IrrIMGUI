@@ -90,7 +90,6 @@ void runScene(void)
   FASSERT(pMoon);
   pMoon->setPosition(irr::core::vector3df(0,0,25));
   pMoon->setMaterialTexture(0, pDriver->getTexture("../../media/Phobos.jpg"));
-  pMoon->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 
   // Add camera object
   pSceneManager->addCameraSceneNode(0, core::vector3df(0, 0, 0), core::vector3df(0,0,5));
@@ -105,7 +104,6 @@ void runScene(void)
   while(pDevice->run())
   {
     pDriver->beginScene(true, true, irr::video::SColor(255,100,101,140));
-
     pGUI->startGUI();
 
     // create first window with picture sources

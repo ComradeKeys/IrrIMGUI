@@ -88,7 +88,6 @@ void runScene(void)
   FASSERT(pMoon);
   pMoon->setPosition(irr::core::vector3df(0,0,25));
   pMoon->setMaterialTexture(0, pDriver->getTexture("../../media/Phobos.jpg"));
-  pMoon->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 
   // Add camera object
   pSceneManager->addCameraSceneNode(0, core::vector3df(0, 0, 0), core::vector3df(0,0,5));

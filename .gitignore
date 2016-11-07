@@ -16,3 +16,5 @@ Doxygen/html/
 /compiled/media
 /release-tools/*
 /release-tools
+IrrIMGUI.kdev4
+.kdev4/

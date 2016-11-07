@@ -92,7 +92,6 @@ void runScene(void)
   FASSERT(pMoon);
   pMoon->setPosition(irr::core::vector3df(0,0,25));
   pMoon->setMaterialTexture(0, pDriver->getTexture("../../media/Phobos.jpg"));
-  pMoon->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 
   // Add camera object
   irr::scene::ICameraSceneNode * const pMainCam = pSceneManager->addCameraSceneNode(pMainScreen, core::vector3df(0, 0, 0), core::vector3df(0,0,5));
@@ -107,8 +106,8 @@ void runScene(void)
   f32 Color[3] = {0.0f/256.0f, 43.0f/256.0f, 56.0f/256.0f};
 
   // Prepare double rendering
-  video::ITexture * const pRenderTarget = pDriver->addRenderTargetTexture(core::dimension2d<u32>(384, 300), "Moon");
-  IGUITexture * const pRenderTextureID  = pGUI->createTexture(pRenderTarget);
+ // video::ITexture * const pRenderTarget = pDriver->addRenderTargetTexture(core::dimension2d<u32>(384, 300), "Moon");
+ // IGUITexture * const pRenderTextureID  = pGUI->createTexture(pRenderTarget);
 
   // Start main loop
   while(pDevice->run())
@@ -118,14 +117,14 @@ void runScene(void)
     // ****************************
     // Render Moon Scene
     // ****************************
-    pDriver->setRenderTarget(pRenderTarget, true, true, video::SColor(255,(u32)(Color[0]*255.0f),(u32)(Color[1]*255.0f),(u32)(Color[2]*255.0f)));
+//    pDriver->setRenderTarget(pRenderTarget, true, true, video::SColor(255,(u32)(Color[0]*255.0f),(u32)(Color[1]*255.0f),(u32)(Color[2]*255.0f)));
     pMoonScreen->setVisible(true);
     pMainScreen->setVisible(false);
     pSceneManager->setActiveCamera(pMoonCam);
 
     pSceneManager->drawAll();
 
-    pDriver->setRenderTarget(0, true, true, video::SColor(255,100,101,140));
+//    pDriver->setRenderTarget(0, true, true, video::SColor(255,100,101,140));
 
     // ****************************
     // Render Main Scene
@@ -151,7 +150,7 @@ void runScene(void)
     }
     ImGui::End();
 
-    pGUI->updateTexture(pRenderTextureID, pRenderTarget);
+ //   pGUI->updateTexture(pRenderTextureID, pRenderTarget);
 
     if (IsFirstLoop)
     {
@@ -160,7 +159,7 @@ void runScene(void)
     }
     ImGui::Begin("Moon Window", NULL, ImGuiWindowFlags_ShowBorders);
     ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-    ImGui::Image(*pRenderTextureID, ImVec2(384, 300));
+   // ImGui::Image(*pRenderTextureID, ImVec2(384, 300));
     ImGui::BeginGroup();
     ImGui::RadioButton("Left",  &RotationDirection, 1);
     ImGui::RadioButton("Stop",  &RotationDirection, 0);
@@ -207,7 +206,7 @@ void runScene(void)
     }
   }
 
-  pGUI->deleteTexture(pRenderTextureID);
+  //pGUI->deleteTexture(pRenderTextureID);
   pGUI->drop();
   pDevice->drop();
 

@@ -39,7 +39,7 @@ endif ()
 
 if (GCC_LIKE_COMPILER)
 	SET (CMAKE_CXX_FLAGS
-		"${CMAKE_CXX_FLAGS} -std=c++11"
+		"${CMAKE_CXX_FLAGS} -std=c++11 -w"
 	)
 	
 	INCLUDE(CheckCSourceCompiles)

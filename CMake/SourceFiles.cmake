@@ -24,6 +24,7 @@
 
 INCLUDE_DIRECTORIES(
   includes
+  source/gl3w/
   )
 
 SET (IRRIMGUI_PUBLIC_HEADER_FILES
@@ -73,4 +74,5 @@ SET (IRRIMGUI_SOURCE_FILES
 	source/IReferenceCounter.cpp
 	source/IrrIMGUIInject.cpp
 	source/UnitTest.cpp
+        source/gl3w/gl3w.c
 )
