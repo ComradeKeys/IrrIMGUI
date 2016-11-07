@@ -48,6 +48,7 @@ SET (IRRIMGUI_PUBLIC_HEADER_FILES
 	includes/IrrIMGUI/IrrIMGUIConstants.h
 	includes/IrrIMGUI/IrrIMGUIDebug.h
 	includes/IrrIMGUI/SIMGUISettings.h
+	includes/IrrIMGUI/imgui_irrlicht.h
 )
 
 SET (IRRIMGUI_PRIVATE_HEADER_FILES
@@ -75,4 +76,5 @@ SET (IRRIMGUI_SOURCE_FILES
 	source/IrrIMGUIInject.cpp
 	source/UnitTest.cpp
         source/gl3w/gl3w.c
+        source/imgui_irrlicht.cpp
 )

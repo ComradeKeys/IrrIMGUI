@@ -31,6 +31,7 @@
 // module includes
 #include <IrrIMGUI/IrrIMGUI.h>
 #include <IrrIMGUI/Inject/IrrIMGUIInject.h>
+#include <GL/gl3w.h>
 #include "private/IrrIMGUIDebug_priv.h"
 #include "CIMGUIHandle.h"
 #include "private/IrrIMGUIInject_priv.h"
@@ -77,7 +78,7 @@ namespace Inject
   {
     FASSERT(Inject::pIMGUIFactoryFunction);
     FASSERT(pDevice);
-
+    gl3wInit();
     return Inject::pIMGUIFactoryFunction(pDevice, pEventStorage, pSettings);
   }
 

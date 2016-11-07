@@ -37,6 +37,8 @@
 #include <IrrIMGUI/IncludeIMGUI.h>
 #include <IrrIMGUI/IrrIMGUI.h>
 #include <IrrIMGUI/IrrIMGUIDebug.h>
+#include "IrrIMGUI/imgui_irrlicht.h"
+#include "GL/gl3w.h"
 
 // helper macros for reacting on unexpected states
 #define _TOSTR(x) #x
@@ -72,7 +74,7 @@ void runScene(void)
 
   video::IVideoDriver  * const pDriver       = pDevice->getVideoDriver();
   scene::ISceneManager * const pSceneManager = pDevice->getSceneManager();
-
+  ImGui_ImplIrrlicht_Init(pDevice);
   pDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
   irr::scene::ISceneNode * const pSkybox = pSceneManager->addSkyBoxSceneNode(
       pDriver->getTexture("../../media/Background.jpg"),
@@ -81,10 +83,10 @@ void runScene(void)
       pDriver->getTexture("../../media/Background.jpg"),
       pDriver->getTexture("../../media/Background.jpg"),
       pDriver->getTexture("../../media/Background.jpg"));
-  pDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
+ // pDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 
   // Create Planet object
-  scene::IMeshSceneNode * const pMoon = pSceneManager->addSphereSceneNode(5.0f, 128);
+  scene::IMeshSceneNode * const pMoon = pSceneManager->addSphereSceneNode(5.0f, 10);
   FASSERT(pMoon);
   pMoon->setPosition(irr::core::vector3df(0,0,25));
   pMoon->setMaterialTexture(0, pDriver->getTexture("../../media/Phobos.jpg"));
@@ -101,8 +103,8 @@ void runScene(void)
   while(pDevice->run())
   {
     pDriver->beginScene(true, true, irr::video::SColor(255,100,101,140));
-
-    pGUI->startGUI();
+    ImGui_ImplIrrlicht_NewFrame(pDevice);
+//     pGUI->startGUI();
     ImGui::Begin("Picture sources", NULL, ImGuiWindowFlags_ShowBorders);
     ImGui::Text("Background picture from Manuel Tellur / pixelio.de (Image-ID: 642831)");
     ImGui::Text("Moon (Phobos) texture from http://nasa3d.arc.nasa.gov");
@@ -113,8 +115,10 @@ void runScene(void)
     ImGui::End();
 
     pSceneManager->drawAll();
-    pGUI->drawAll();
-
+//     pGUI->drawAll();
+    // Rendering
+    glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+    ImGui::Render();
     pDriver->endScene();
 
     u32 const Time = pDevice->getTimer()->getRealTime();
@@ -138,7 +142,7 @@ void runScene(void)
   }
 
   pDevice->drop();
-  pGUI->drop();
+//   pGUI->drop();
 
 }
 
