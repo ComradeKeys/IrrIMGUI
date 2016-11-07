@@ -37,17 +37,29 @@
 #ifdef _IRRIMGUI_WINDOWS_
 #include <windows.h>
 #endif // _IRRIMGUI_WINDOWS_
+#include <GL/gl3w.h>
 #include <GL/gl.h>
 
 // module includes
 #include "CIrrlichtIMGUIDriver.h"
 #include "private/CGUITexture.h"
 #include "private/IrrIMGUIDebug_priv.h"
+#include "IrrIMGUI/imgui_irrlicht.h"
 
 /**
 * @addtogroup IrrIMGUIPrivate
 * @{
 */
+
+// Data
+static double       g_Time = 0.0f;
+static bool         g_MousePressed[3] = { false, false, false };
+static float        g_MouseWheel = 0.0f;
+static GLuint       g_FontTexture = 0;
+static int          g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
+static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0, g_AttribLocationClipRect = 0;
+static int          g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
+static unsigned int g_VboHandle = 0, g_VaoHandle = 0, g_ElementsHandle = 0;
 
 namespace IrrIMGUI {
 namespace Private {
@@ -139,25 +151,138 @@ void CIrrlichtIMGUIDriver::setupFunctionPointer(void) {
     ImGuiIO &rGUIIO  = ImGui::GetIO();
 
     rGUIIO.RenderDrawListsFn = CIrrlichtIMGUIDriver::drawGUIList;
-
+puts("Better draw function has been set");
     return;
 }
 
 void CIrrlichtIMGUIDriver::drawGUIList(ImDrawData *pDrawData) {
-    pDrawData->ScaleClipRects(ImGui::GetIO().DisplayFramebufferScale);
-
-    irr::video::IVideoDriver *const pIrrDriver = getIrrDevice()->getVideoDriver();
-    irr::video::SMaterial const CurrentMaterial = pIrrDriver->getMaterial2D();
-    pIrrDriver->enableMaterial2D(true);
-
-    for(int CommandListIndex = 0; CommandListIndex < pDrawData->CmdListsCount; CommandListIndex++) {
-        drawCommandList(pDrawData->CmdLists[CommandListIndex]);
+    puts("Better draw list being called");
+    // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
+    ImGuiIO &io = ImGui::GetIO();
+    int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
+    int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
+    if(fb_width == 0 || fb_height == 0) {
+        return;
     }
+    pDrawData->ScaleClipRects(io.DisplayFramebufferScale);
+    // Backup GL state
+    GLint last_program;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+    GLint last_texture;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
+    GLint last_active_texture;
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &last_active_texture);
+    GLint last_array_buffer;
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
+    GLint last_element_array_buffer;
+    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
+    GLint last_vertex_array;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
+    GLint last_blend_src;
+    glGetIntegerv(GL_BLEND_SRC, &last_blend_src);
+    GLint last_blend_dst;
+    glGetIntegerv(GL_BLEND_DST, &last_blend_dst);
+    GLint last_blend_equation_rgb;
+    glGetIntegerv(GL_BLEND_EQUATION_RGB, &last_blend_equation_rgb);
+    GLint last_blend_equation_alpha;
+    glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &last_blend_equation_alpha);
+    GLint last_viewport[4];
+    glGetIntegerv(GL_VIEWPORT, last_viewport);
+    GLint last_scissor_box[4];
+    glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
+    GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
+    GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
+    GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+    GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
+    
+    // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_FUNC_ADD);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_SCISSOR_TEST);
+    glActiveTexture(GL_TEXTURE0);
+    
+    // Setup orthographic projection matrix
+    glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
+    const float ortho_projection[4][4] = {
+        { 2.0f / io.DisplaySize.x, 0.0f,                   0.0f, 0.0f },
+        { 0.0f,                  2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
+        { 0.0f,                  0.0f,                  -1.0f, 0.0f },
+        { -1.0f,                  1.0f,                   0.0f, 1.0f },
+    };
+    glUseProgram(g_ShaderHandle);
+    glUniform1i(g_AttribLocationTex, 0);
+    glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
+    glBindVertexArray(g_VaoHandle);
+    
+    for(int n = 0; n < pDrawData->CmdListsCount; n++) {
+        const ImDrawList *cmd_list = pDrawData->CmdLists[n];
+        const ImDrawIdx *idx_buffer_offset = 0;
+        
+        glBindBuffer(GL_ARRAY_BUFFER, g_VboHandle);
+        glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (GLvoid *)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ElementsHandle);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (GLvoid *)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
+        
+        for(int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
+            const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+            if(pcmd->UserCallback) {
+                pcmd->UserCallback(cmd_list, pcmd);
+            } else {
+                glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+                //                glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
+                float clipRect[4];
+                clipRect[0] = (int)pcmd->ClipRect.x;
+                clipRect[1] = (int)(fb_height - pcmd->ClipRect.w);
+                clipRect[2] = (int)(pcmd->ClipRect.z - pcmd->ClipRect.x);
+                clipRect[3] = (int)(pcmd->ClipRect.w - pcmd->ClipRect.y);
+                glUniform4f(g_AttribLocationClipRect, clipRect[0], clipRect[1], clipRect[2], clipRect[3]);
+                
+                glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer_offset);
+            }
+            idx_buffer_offset += pcmd->ElemCount;
+        }
+    }
+    
+    // Restore modified GL state
+    glUseProgram(last_program);
+    glActiveTexture(last_active_texture);
+    glBindTexture(GL_TEXTURE_2D, last_texture);
+    glBindVertexArray(last_vertex_array);
+    glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
+    glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
+    glBlendFunc(last_blend_src, last_blend_dst);
+    if(last_enable_blend) {
+        glEnable(GL_BLEND);
+    } else {
+        glDisable(GL_BLEND);
+    }
+    if(last_enable_cull_face) {
+        glEnable(GL_CULL_FACE);
+    } else {
+        glDisable(GL_CULL_FACE);
+    }
+    if(last_enable_depth_test) {
+        glEnable(GL_DEPTH_TEST);
+    } else {
+        glDisable(GL_DEPTH_TEST);
+    }
+    //    if (last_enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
+    glEnable(GL_CLIP_DISTANCE0);
+    glEnable(GL_CLIP_DISTANCE1);
+    glEnable(GL_CLIP_DISTANCE2);
+    glEnable(GL_CLIP_DISTANCE3);
+    glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
+    //    glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
+    glDisable(GL_CLIP_DISTANCE3);
+    glDisable(GL_CLIP_DISTANCE2);
+    glDisable(GL_CLIP_DISTANCE1);
+    glDisable(GL_CLIP_DISTANCE0);
 
-    pIrrDriver->enableMaterial2D(false);
-    pIrrDriver->getMaterial2D() = CurrentMaterial;
-
-    return;
 }
 
 void CIrrlichtIMGUIDriver::drawCommandList(ImDrawList *pCommandList) {

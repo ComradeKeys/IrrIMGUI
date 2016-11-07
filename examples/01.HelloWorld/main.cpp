@@ -37,7 +37,6 @@
 #include <IrrIMGUI/IncludeIMGUI.h>
 #include <IrrIMGUI/IrrIMGUI.h>
 #include <IrrIMGUI/IrrIMGUIDebug.h>
-#include "IrrIMGUI/imgui_irrlicht.h"
 #include "GL/gl3w.h"
 
 // helper macros for reacting on unexpected states
@@ -74,7 +73,6 @@ void runScene(void)
 
   video::IVideoDriver  * const pDriver       = pDevice->getVideoDriver();
   scene::ISceneManager * const pSceneManager = pDevice->getSceneManager();
-  ImGui_ImplIrrlicht_Init(pDevice);
   pDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
   irr::scene::ISceneNode * const pSkybox = pSceneManager->addSkyBoxSceneNode(
       pDriver->getTexture("../../media/Background.jpg"),
@@ -102,7 +100,6 @@ void runScene(void)
   while(pDevice->run())
   {
     pDriver->beginScene(true, true, irr::video::SColor(255,100,101,140));
-    ImGui_ImplIrrlicht_NewFrame(pDevice);
     pGUI->startGUI();
 
     ImGui::Begin("Picture sources", NULL, ImGuiWindowFlags_ShowBorders);
@@ -115,10 +112,9 @@ void runScene(void)
     ImGui::End();
 
     pSceneManager->drawAll();
-//     pGUI->drawAll();
+    pGUI->drawAll();
     // Rendering
-    glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
-    ImGui::Render();
+
     pDriver->endScene();
 
     u32 const Time = pDevice->getTimer()->getRealTime();

@@ -35,6 +35,7 @@
 #include "private/IrrIMGUIDebug_priv.h"
 #include "CIMGUIHandle.h"
 #include "private/IrrIMGUIInject_priv.h"
+#include "IrrIMGUI/imgui_irrlicht.h"
 
 namespace IrrIMGUI {
 namespace Private {
@@ -71,7 +72,9 @@ IIMGUIHandle *createIMGUI(irr::IrrlichtDevice *pDevice, CIMGUIEventStorage *pEve
     FASSERT(Inject::pIMGUIFactoryFunction);
     FASSERT(pDevice);
     gl3wInit();
-    return Inject::pIMGUIFactoryFunction(pDevice, pEventStorage, pSettings);
+    IIMGUIHandle *handle = Inject::pIMGUIFactoryFunction(pDevice, pEventStorage, pSettings);
+    ImGui_ImplIrrlicht_Init(pDevice);
+    return handle;
 }
 
 }

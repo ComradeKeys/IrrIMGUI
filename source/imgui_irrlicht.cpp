@@ -15,7 +15,6 @@
 #include <IrrlichtDevice.h>
 #include <ISceneManager.h>
 #include <IOSOperator.h>
-irr::IrrlichtDevice *device;
 
 // Data
 static double       g_Time = 0.0f;
@@ -31,6 +30,7 @@ static unsigned int g_VboHandle = 0, g_VaoHandle = 0, g_ElementsHandle = 0;
 // If text or lines are blurry when integrating ImGui in your engine:
 // - in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
 void ImGui_ImplIrrlicht_RenderDrawLists(ImDrawData *draw_data) {
+    puts("Old draw list is being called");
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     ImGuiIO &io = ImGui::GetIO();
     int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
@@ -158,13 +158,14 @@ void ImGui_ImplIrrlicht_RenderDrawLists(ImDrawData *draw_data) {
     glDisable(GL_CLIP_DISTANCE0);
 }
 
+/*
 static const char *ImGui_ImplIrrlicht_GetClipboardText(void *) {
     return device->getOSOperator()->getTextFromClipboard();
 }
 
 static void ImGui_ImplIrrlicht_SetClipboardText(void *, const char *text) {
     device->getOSOperator()->copyToClipboard(text);
-}
+}*/
 
 bool ImGui_ImplIrrlicht_ProcessEvent(irr::SEvent event) {
     ImGuiIO &io = ImGui::GetIO();
@@ -352,13 +353,10 @@ void    ImGui_ImplIrrlicht_InvalidateDeviceObjects() {
     }
 }
 
-bool    ImGui_ImplIrrlicht_Init(irr::IrrlichtDevice *dev) {
-    device = dev;
+bool ImGui_ImplIrrlicht_Init(irr::IrrlichtDevice *dev) {
+
     ImGuiIO &io = ImGui::GetIO();
     io.RenderDrawListsFn = ImGui_ImplIrrlicht_RenderDrawLists;   // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
-    io.SetClipboardTextFn = ImGui_ImplIrrlicht_SetClipboardText;
-    io.GetClipboardTextFn = ImGui_ImplIrrlicht_GetClipboardText;
-    io.ClipboardUserData = NULL;
 
     return true;
 }
@@ -386,7 +384,7 @@ void ImGui_ImplIrrlicht_NewFrame(irr::IrrlichtDevice *dev) {
     io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
 
     // Setup time step
-    int	time = device->getTimer()->getTime();
+    int	time = dev->getTimer()->getTime();
     double current_time = time / 1000.0;
     io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f / 60.0f);
     g_Time = current_time;

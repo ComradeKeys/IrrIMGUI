@@ -34,7 +34,8 @@
 #include "IIMGUIDriver.h"
 #include <IrrIMGUI/IMGUIHelper.h>
 #include "private/IrrIMGUIDebug_priv.h"
-
+#include "IrrIMGUI/imgui_irrlicht.h"
+#include <GL/gl3w.h>
 /**
  * @addtogroup IrrIMGUIPrivate
  * @{
@@ -79,6 +80,7 @@ CIMGUIHandle::~CIMGUIHandle(void) {
 }
 
 void CIMGUIHandle::drawAll(void) {
+    glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
 
     ImGui::Render();
     return;
@@ -87,7 +89,8 @@ void CIMGUIHandle::drawAll(void) {
 void CIMGUIHandle::startGUI(void) {
 
     updateIMGUIFrameValues(mpGUIDriver->getIrrDevice(), mpEventStorage, &mLastTime);
-
+    ImGui_ImplIrrlicht_NewFrame(mpGUIDriver->getIrrDevice());
+    
     // start new GUI frame
   //  ImGui::NewFrame();
 

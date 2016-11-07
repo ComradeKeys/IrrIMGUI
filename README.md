@@ -6,6 +6,8 @@
 
 **ATTENTION:** The version on the master branch is unstable. For a stable version please look at [Latest Version News](#LatestVersionNews).
 
+Created in struggle, by will of the people
+
 ## Index
 
 * [Introduction](#Introduction)
