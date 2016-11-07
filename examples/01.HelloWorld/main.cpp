@@ -104,7 +104,7 @@ void runScene(void)
   {
     pDriver->beginScene(true, true, irr::video::SColor(255,100,101,140));
     ImGui_ImplIrrlicht_NewFrame(pDevice);
-//     pGUI->startGUI();
+    pGUI->startGUI();
     ImGui::Begin("Picture sources", NULL, ImGuiWindowFlags_ShowBorders);
     ImGui::Text("Background picture from Manuel Tellur / pixelio.de (Image-ID: 642831)");
     ImGui::Text("Moon (Phobos) texture from http://nasa3d.arc.nasa.gov");
