@@ -17,6 +17,7 @@ This software is under the Standard Library Function License which prohibits inc
 - BSD (any variant)
 - zlib
 - MIT
+
 If you would like a full zlib exception to the license please contact Brigham Keys at bkeys@bkeys.org
 
 Known Issues
