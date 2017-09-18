@@ -61,9 +61,9 @@ namespace IrrIMGUI
       bool mIsLeftMouseButtonPressed;
       bool mIsRightMouseButtonPressed;
       bool mIsMiddleMouseButtonPressed;
-      irr::s32 mMousePositionX;
-      irr::s32 mMousePositionY;
-      irr::f32 mMouseWheelPosition;
+      int mMousePositionX;
+      int mMousePositionY;
+      float mMouseWheelPosition;
 
       /// @}
 

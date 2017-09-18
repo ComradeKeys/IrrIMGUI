@@ -36,7 +36,7 @@ class IIMGUIHandleMock : public IrrIMGUI::IIMGUIHandle
     IIMGUIHandleMock(irr::IrrlichtDevice * const pDevice, IrrIMGUI::CIMGUIEventStorage * const pEventStorage = nullptr, IrrIMGUI::SIMGUISettings const * const pSettings = nullptr):
       mpDevice(pDevice),
       mpEventStorage(pEventStorage),
-      mLastTime(static_cast<irr::f32>(pDevice->getTimer()->getTime())/1000.0f)
+      mLastTime(static_cast<float>(pDevice->getTimer()->getTime())/1000.0f)
     {
       MOCK_FUNC("IIMGUIHandleMock::IIMGUIHandleMock").MOCK_ARG(pDevice).MOCK_ARG(pEventStorage).MOCK_ARG(pSettings);
 
@@ -302,7 +302,7 @@ class IIMGUIHandleMock : public IrrIMGUI::IIMGUIHandle
     IrrIMGUI::CIMGUIEventStorage * const mpEventStorage;
 
     /// @brief Stores the last time in seconds, when an update was done.
-    irr::f32                             mLastTime;
+    float                             mLastTime;
 
     /// @return Returns a dummy font in case of IMGUI is enabled or nullptr, when IMGUI is disabled.
     ImFont * getDummyFont(void)

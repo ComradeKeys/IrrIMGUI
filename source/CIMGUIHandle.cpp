@@ -20,7 +20,7 @@
 
 namespace IrrIMGUI {
 namespace Private {
-irr::u32 CIMGUIHandle::mHandleInstances = 0;
+unsigned int CIMGUIHandle::mHandleInstances = 0;
 
 CIMGUIHandle::CIMGUIHandle(irr::IrrlichtDevice *const pDevice, CIMGUIEventStorage *const pEventStorage, SIMGUISettings const &rSettings):
     CIMGUIHandle(pDevice, pEventStorage, &rSettings) {

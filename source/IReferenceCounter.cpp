@@ -45,7 +45,7 @@ void IReferenceCounter::drop(void) {
     return;
 }
 
-irr::u32 IReferenceCounter::getReferenceCount(void) const {
+unsigned int IReferenceCounter::getReferenceCount(void) const {
     return mReferences;
 }
 

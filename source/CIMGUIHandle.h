@@ -262,9 +262,9 @@ private:
     void updateKeyboard(void);
 
     Private::IIMGUIDriver *mpGUIDriver;
-    irr::f32                mLastTime;
+    float                mLastTime;
     CIMGUIEventStorage     *mpEventStorage;
-    static irr::u32         mHandleInstances;
+    static unsigned int         mHandleInstances;
 
 };
 

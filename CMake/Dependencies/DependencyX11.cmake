@@ -1,6 +1,6 @@
 # The ZLIB license
 #
-# Copyright (c) 2015 André Netzeband
+# Copyright (c) 2015 Andrï¿½ Netzeband
 #
 # This software is provided 'as-is', without any express or implied
 # warranty. In no event will the authors be held liable for any damages
@@ -58,6 +58,8 @@ if ((UNIX) OR (APPLE))
 		SET(IRRIMGUI_DEPENDENCY_LIBRARIES
 			${IRRIMGUI_DEPENDENCY_LIBRARIES}
 			${X11_Xxf86vm_LIB}
+			unwind-x86_64
+			unwind
 		)
 	else ()
 		MESSAGE(WARNING "X11 xf86vm library is missing. Not all tools and examples may compile correctly...")

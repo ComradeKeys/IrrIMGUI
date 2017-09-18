@@ -48,11 +48,11 @@ namespace IrrIMGUI
       virtual void drop(void);
 
       /// @return Returns the current reference count.
-      virtual irr::u32 getReferenceCount(void) const;
+      virtual unsigned int getReferenceCount(void) const;
 
     private:
       /// @brief The reference counter of this class.
-      irr::u32 mReferences;
+      unsigned int mReferences;
   };
 
 }

@@ -90,7 +90,7 @@ public:
     /// @param Width       Is the number of Pixels in X direction.
     /// @param Height      Is the number of Pixels in Y direction.
     /// @return Returns an GUI texture object.
-    virtual IGUITexture *createTexture(EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height) = 0;
+    virtual IGUITexture *createTexture(EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height) = 0;
 
     /// @brief Creates a GUI texture object out of an Irrlicht image.
     /// @param pImage Is a pointer to an Irrlicht image object.
@@ -112,7 +112,7 @@ public:
     /// @param pPixelData  Is a pointer to the pixel array.
     /// @param Width       Is the number of Pixels in X direction.
     /// @param Height      Is the number of Pixels in Y direction.
-    virtual void updateTexture(IGUITexture *pGUITexture, EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height) = 0;
+    virtual void updateTexture(IGUITexture *pGUITexture, EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height) = 0;
 
     /// @brief Updates a GUI texture object with an Irrlicht image.
     /// @param pGUITexture Is a pointer to the GUI texture object.
@@ -149,7 +149,7 @@ protected:
     /// @brief Setups the keyboard controls to fit to Irrlicht.
     void setupKeyControl(void);
 
-    static irr::u32              mTextureInstances;
+    static unsigned int              mTextureInstances;
 
 private:
     /// @brief Updated the settings of IMGUI.
@@ -157,7 +157,7 @@ private:
 
     static irr::IrrlichtDevice *mpDevice;
     static IIMGUIDriver         *mpInstance;
-    static irr::u32              mInstances;
+    static unsigned int              mInstances;
     static SIMGUISettings        mSettings;
     static IGUITexture          *mpFontTexture;
 

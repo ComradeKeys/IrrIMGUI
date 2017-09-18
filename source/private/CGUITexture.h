@@ -35,8 +35,8 @@ namespace Private
   {
       irr::video::ITexture *TextureID;
       irr::video::IImage   *ImageID;
-      irr::u8              *RawDataID;
-      irr::u8              *GUIFontID;
+      unsigned char              *RawDataID;
+      unsigned char              *GUIFontID;
   };
 
   class CGUITexture : public IGUITexture

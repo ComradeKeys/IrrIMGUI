@@ -57,14 +57,14 @@ namespace IrrIMGUI
       bool isFull(void) const;
 
       /// @return Returns the number of characters inside the Fifo.
-      irr::u8 getNumberOfElements(void) const;
+      unsigned char getNumberOfElements(void) const;
 
       /// @}
 
     private:
       ImWchar mCharArray[256];
-      irr::u8 mWriteIndex;
-      irr::u8 mReadIndex;
+      unsigned char mWriteIndex;
+      unsigned char mReadIndex;
   };
 }
 

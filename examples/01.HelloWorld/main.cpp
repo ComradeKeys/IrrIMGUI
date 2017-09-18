@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 André Netzeband
+ * Copyright (c) 2015-2016 Andrï¿½ Netzeband
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ void runScene(void)
   SIrrlichtCreationParameters IrrlichtParams;
   IrrlichtParams.DriverType    = video::EDT_OPENGL;
   //IrrlichtParams.DriverType    = video::EDT_DIRECT3D9;
-  IrrlichtParams.WindowSize    = core::dimension2d<u32>(1024, 800);
+  IrrlichtParams.WindowSize    = core::dimension2d<unsigned int>(1024, 800);
   IrrlichtParams.Bits          = 32;
   IrrlichtParams.Fullscreen    = false;
   IrrlichtParams.Stencilbuffer = true;
@@ -91,10 +91,10 @@ void runScene(void)
   // Add camera object
   pSceneManager->addCameraSceneNode(0, core::vector3df(0, 0, 0), core::vector3df(0,0,5));
 
-  s32 LastFPS  = 0;
-  u32 LastTime = pDevice->getTimer()->getRealTime();
-  f32 Rotation = 0.0;
-  f32 const RotPerSec = 0.01f;
+  int LastFPS  = 0;
+  unsigned int LastTime = pDevice->getTimer()->getRealTime();
+  float Rotation = 0.0;
+  float const RotPerSec = 0.01f;
 
   // Start main loop
   while(pDevice->run())
@@ -117,8 +117,8 @@ void runScene(void)
 
     pDriver->endScene();
 
-    u32 const Time = pDevice->getTimer()->getRealTime();
-    u32 const DeltaTime = Time - LastTime;
+    unsigned int const Time = pDevice->getTimer()->getRealTime();
+    unsigned int const DeltaTime = Time - LastTime;
     if (DeltaTime > 0)
     {
       Rotation += (360.0f * RotPerSec) * (DeltaTime / 1000.0f);
@@ -126,12 +126,12 @@ void runScene(void)
     }
     pMoon->setRotation(irr::core::vector3df(0,Rotation,0));
 
-    s32 const FPS = pDriver->getFPS();
+    int const FPS = pDriver->getFPS();
     if (FPS != LastFPS)
     {
       LastFPS = FPS;
       core::stringw TempString = L"Hello World, A simple IMGUI example - FPS: ";
-      TempString += LastFPS;
+      TempString += std::to_string(LastFPS).c_str();
       pDevice->setWindowCaption(TempString.c_str());
     }
 

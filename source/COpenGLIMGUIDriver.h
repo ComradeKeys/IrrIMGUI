@@ -75,7 +75,7 @@ private:
     /// @param Width       Is the number of Pixels in X direction.
     /// @param Height      Is the number of Pixels in Y direction.
     /// @return Returns an GUI texture object.
-    virtual IGUITexture *createTexture(EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height);
+    virtual IGUITexture *createTexture(EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height);
 
     /// @brief Creates a GUI texture object out of an Irrlicht image.
     /// @param pImage Is a pointer to an Irrlicht image object.
@@ -97,7 +97,7 @@ private:
     /// @param pPixelData  Is a pointer to the pixel array.
     /// @param Width       Is the number of Pixels in X direction.
     /// @param Height      Is the number of Pixels in Y direction.
-    virtual void updateTexture(IGUITexture *pGUITexture, EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height);
+    virtual void updateTexture(IGUITexture *pGUITexture, EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height);
 
     /// @brief Updates a GUI texture object with an Irrlicht image.
     /// @param pGUITexture Is a pointer to the GUI texture object.

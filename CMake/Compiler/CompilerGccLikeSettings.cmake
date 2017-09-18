@@ -1,7 +1,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2015 André Netzeband
+# Copyright (c) 2015 Andrï¿½ Netzeband
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ endif ()
 
 if (GCC_LIKE_COMPILER)
 	SET (CMAKE_CXX_FLAGS
-		"${CMAKE_CXX_FLAGS} -std=c++11 -w"
+		"${CMAKE_CXX_FLAGS} -std=c++11 -w -ldl"
 	)
 	
 	INCLUDE(CheckCSourceCompiles)

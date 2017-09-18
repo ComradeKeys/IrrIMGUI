@@ -66,10 +66,10 @@ bool CCharFifo::isEmpty(void) const {
 }
 
 bool CCharFifo::isFull(void) const {
-    return static_cast<irr::u8>(mWriteIndex + 1) == mReadIndex;
+    return static_cast<unsigned char>(mWriteIndex + 1) == mReadIndex;
 }
 
-irr::u8 CCharFifo::getNumberOfElements(void) const {
+unsigned char CCharFifo::getNumberOfElements(void) const {
     return mWriteIndex - mReadIndex;
 }
 

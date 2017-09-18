@@ -42,10 +42,10 @@ namespace Driver {
 /// @brief Functions that help adapting Irrlicht logic to IMGUI
 namespace IrrlichtHelper {
 /// @brief A magic number for the default font ID IMGUI.
-static irr::u8 *const IMGUI_FONT_ID = nullptr;
+static unsigned char *const IMGUI_FONT_ID = nullptr;
 
 /// @brief This is used to create an unique texture name.
-static irr::u32 TextureCreationID = 0;
+static unsigned int TextureCreationID = 0;
 
 /// @brief Indicates, if trilinear filter should be enabled for textures.
 static bool IsTrilinearFilterEnabled = false;
@@ -53,7 +53,7 @@ static bool IsTrilinearFilterEnabled = false;
 /// @brief Translates an IMGUI Color to an Irrlicht Color.
 /// @param ImGuiColor is the u32 Color value from IMGUI.
 /// @return Returns a SColor object for Irrlicht.
-irr::video::SColor getColorFromImGuiColor(irr::u32 ImGuiColor);
+irr::video::SColor getColorFromImGuiColor(unsigned int ImGuiColor);
 
 /// @brief Creates a Texture object from the currently loaded Fonts.
 /// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
@@ -66,7 +66,7 @@ ImTextureID copyTextureIDFromGUIFont(irr::video::IVideoDriver *pIrrDriver);
 /// @param pPixelData  Is a pointer to the pixel array.
 /// @param Width       Is the number of Pixels in X direction.
 /// @param Height      Is the number of Pixels in Y direction.
-ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *pIrrDriver, EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height);
+ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *pIrrDriver, EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height);
 
 /// @brief Creates a Texture object from the currently loaded Fonts.
 /// @param pIrrDriver  Is a pointer to the Irrlicht driver object.
@@ -262,7 +262,7 @@ void CIrrlichtIMGUIDriver::drawCommandList(ImDrawList *pCommandList) {
     return;
 }
 
-IGUITexture *CIrrlichtIMGUIDriver::createTexture(EColorFormat const ColorFormat, irr::u8 *const pPixelData, irr::u32 const Width, irr::u32 const Height) {
+IGUITexture *CIrrlichtIMGUIDriver::createTexture(EColorFormat const ColorFormat, unsigned char *const pPixelData, unsigned int const Width, unsigned int const Height) {
     mTextureInstances++;
     CGUITexture *const pGUITexture = new CGUITexture();
 
@@ -317,7 +317,7 @@ IGUITexture *CIrrlichtIMGUIDriver::createFontTexture(void) {
     return pGUITexture;
 }
 
-void CIrrlichtIMGUIDriver::updateTexture(IGUITexture *const pGUITexture, EColorFormat const ColorFormat, irr::u8 *const pPixelData, irr::u32 const Width, irr::u32 const Height) {
+void CIrrlichtIMGUIDriver::updateTexture(IGUITexture *const pGUITexture, EColorFormat const ColorFormat, unsigned char *const pPixelData, unsigned int const Width, unsigned int const Height) {
     CGUITexture *const pRealTexture = dynamic_cast<CGUITexture *const>(pGUITexture);
     bool IsRecreationNecessary = false;
 
@@ -444,34 +444,34 @@ void CIrrlichtIMGUIDriver::deleteTexture(IGUITexture *const pGUITexture) {
 namespace IrrlichtHelper {
 
 
-irr::video::SColor getColorFromImGuiColor(irr::u32 const ImGuiColor) {
+irr::video::SColor getColorFromImGuiColor(unsigned int const ImGuiColor) {
     ImColor const Color(ImGuiColor);
 
-    irr::u8 const Red   = static_cast<irr::u8>(Color.Value.x * 255);
-    irr::u8 const Green = static_cast<irr::u8>(Color.Value.y * 255);
-    irr::u8 const Blue  = static_cast<irr::u8>(Color.Value.z * 255);
-    irr::u8 const Alpha = static_cast<irr::u8>(Color.Value.w * 255);
+    unsigned char const Red   = static_cast<unsigned char>(Color.Value.x * 255);
+    unsigned char const Green = static_cast<unsigned char>(Color.Value.y * 255);
+    unsigned char const Blue  = static_cast<unsigned char>(Color.Value.z * 255);
+    unsigned char const Alpha = static_cast<unsigned char>(Color.Value.w * 255);
 
     return irr::video::SColor(Alpha, Red, Green, Blue);
 }
 
-ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *const pIrrDriver, EColorFormat const ColorFormat, irr::u8 *const pPixelData, irr::u32 const Width, irr::u32 const Height) {
+ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *const pIrrDriver, EColorFormat const ColorFormat, unsigned char *const pPixelData, unsigned int const Width, unsigned int const Height) {
 
-    irr::u32 *pImageData = nullptr;
+    unsigned int *pImageData = nullptr;
     bool IsTempMemoryUsed = false;
 
     // decide if we need to translate the color or not
     switch(ColorFormat) {
         case ECF_A8R8G8B8:
-            pImageData       = reinterpret_cast<irr::u32 *>(pPixelData);
+            pImageData       = reinterpret_cast<unsigned int *>(pPixelData);
             IsTempMemoryUsed = false;
             break;
 
         case ECF_R8G8B8A8:
-            pImageData       = reinterpret_cast<irr::u32 *>(pPixelData);
+            pImageData       = reinterpret_cast<unsigned int *>(pPixelData);
             IsTempMemoryUsed = false;
 
-            for(irr::u32 X = 0; X < (Width * Height); X++) {
+            for(unsigned int X = 0; X < (Width * Height); X++) {
                 irr::video::SColor Color = getColorFromImGuiColor(pImageData[X]);
                 Color.getData(&pImageData[X], irr::video::ECF_A8R8G8B8);
             }
@@ -479,10 +479,10 @@ ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *const pIrrDriver,
             break;
 
         case ECF_A8:
-            pImageData       = new irr::u32[Width * Height];
+            pImageData       = new unsigned int[Width * Height];
             IsTempMemoryUsed = true;
 
-            for(irr::u32 X = 0; X < (Width * Height); X++) {
+            for(unsigned int X = 0; X < (Width * Height); X++) {
                 // set only Alpha
                 irr::video::SColor Color(pPixelData[X], 255, 255, 255);
                 Color.getData(&pImageData[X], irr::video::ECF_A8R8G8B8);
@@ -500,7 +500,7 @@ ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *const pIrrDriver,
     pIrrDriver->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
 
     // create image object from raw data
-    irr::core::dimension2d<irr::u32> const Size(Width, Height);
+    irr::core::dimension2d<unsigned int> const Size(Width, Height);
     irr::video::IImage *const pImage = pIrrDriver->createImageFromData(irr::video::ECF_A8R8G8B8, Size, pImageData);
 
     // create unique texture name for Irrlicht
@@ -527,7 +527,7 @@ ImTextureID copyTextureIDFromRawData(irr::video::IVideoDriver *const pIrrDriver,
 
 ImTextureID copyTextureIDFromGUIFont(irr::video::IVideoDriver *const pIrrDriver) {
     // Get Font Texture from IMGUI system.
-    irr::u8 *pPixelData;
+    unsigned char *pPixelData;
     int Width, Height;
     ImGui::GetIO().Fonts->GetTexDataAsAlpha8(&pPixelData, &Width, &Height);
 

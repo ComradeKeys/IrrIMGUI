@@ -18,7 +18,7 @@ namespace IrrIMGUI {
 static void updateScreenSize(irr::IrrlichtDevice *const pDevice) {
     ImGuiIO &rGUIIO = ImGui::GetIO();
 
-    irr::core::dimension2d<irr::u32> const &rRenderTargetSize = pDevice->getVideoDriver()->getCurrentRenderTargetSize();
+    irr::core::dimension2d<unsigned int> const &rRenderTargetSize = pDevice->getVideoDriver()->getCurrentRenderTargetSize();
     rGUIIO.DisplaySize = ImVec2(static_cast<float>(rRenderTargetSize.Width), static_cast<float>(rRenderTargetSize.Height));
 
     return;
@@ -27,11 +27,11 @@ static void updateScreenSize(irr::IrrlichtDevice *const pDevice) {
 /// @brief Updated the IMGUI timer.
 /// @param pDevice   Is a pointer to an Irrlicht device.
 /// @param pLastTime Is a pointer to a variable that stores the timer value from the last update.
-static void updateTimer(irr::IrrlichtDevice *const pDevice, irr::f32 *const pLastTime) {
+static void updateTimer(irr::IrrlichtDevice *const pDevice, float *const pLastTime) {
     ImGuiIO &rGUIIO = ImGui::GetIO();
 
-    irr::f32 const CurrentTime = static_cast<float>(pDevice->getTimer()->getTime()) / 1000.0f;
-    irr::f32 const DeltaTime   = CurrentTime - *pLastTime;
+    float const CurrentTime = static_cast<float>(pDevice->getTimer()->getTime()) / 1000.0f;
+    float const DeltaTime   = CurrentTime - *pLastTime;
     *pLastTime = CurrentTime;
 
     rGUIIO.DeltaTime = ((float)(DeltaTime > 0.0f ? DeltaTime : 0.00001f));
@@ -94,7 +94,7 @@ static void updateKeyboard(CIMGUIEventStorage *const pEventStorage) {
     return;
 }
 
-void updateIMGUIFrameValues(irr::IrrlichtDevice *const pDevice,  CIMGUIEventStorage *const pEventStorage, irr::f32 *const pLastTime) {
+void updateIMGUIFrameValues(irr::IrrlichtDevice *const pDevice,  CIMGUIEventStorage *const pEventStorage, float *const pLastTime) {
     updateScreenSize(pDevice);
     updateTimer(pDevice, pLastTime);
     if(pEventStorage) {

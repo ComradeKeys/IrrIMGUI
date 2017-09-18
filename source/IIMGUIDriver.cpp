@@ -25,11 +25,11 @@ namespace IrrIMGUI {
 namespace Private {
 
 IIMGUIDriver         *IIMGUIDriver::mpInstance = nullptr;
-irr::u32              IIMGUIDriver::mInstances = 0;
+unsigned int              IIMGUIDriver::mInstances = 0;
 irr::IrrlichtDevice *IIMGUIDriver::mpDevice   = nullptr;
 SIMGUISettings        IIMGUIDriver::mSettings;
 IGUITexture          *IIMGUIDriver::mpFontTexture = nullptr;
-irr::u32              IIMGUIDriver::mTextureInstances = 0;
+unsigned int              IIMGUIDriver::mTextureInstances = 0;
 
 IIMGUIDriver::IIMGUIDriver(irr::IrrlichtDevice *const pDevice) {
     LOG_NOTE("{IrrIMGUI} Create Singleton Instance of IIMGUIDriver.\n");

@@ -56,7 +56,7 @@ ImTextureID copyTextureIDFromIrrlichtImage(irr::video::IImage *pImage);
 /// @param Width       Is the number of X pixels.
 /// @param Height      Is the number of Y pixels.
 /// @return Returns a GPU memory ID.
-ImTextureID createTextureIDFromRawData(EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height);
+ImTextureID createTextureIDFromRawData(EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height);
 
 /// @brief Creates an new texture from raw data inside the GPU memory.
 ///        For this, the Color Format must be already in an OpenGL accepted format!
@@ -65,14 +65,14 @@ ImTextureID createTextureIDFromRawData(EColorFormat ColorFormat, irr::u8 *pPixel
 /// @param Width             Is the number of X pixels.
 /// @param Height            Is the number of Y pixels.
 /// @return Returns a GPU memory ID.
-ImTextureID createTextureInMemory(GLint OpenGLColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height);
+ImTextureID createTextureInMemory(GLint OpenGLColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height);
 
 /// @brief Translates an image in ARGB format (used by Irrlicht) to an image in RGBA format (used by OpenGL).
 /// @param pSource      Is a pointer to the source data array.
 /// @param pDestination Is a pointer to the destination data array.
 /// @param Width             Is the number of X pixels.
 /// @param Height            Is the number of Y pixels.
-void copyARGBImageToRGBA(irr::u32 *pSource, irr::u32 *pDestination, irr::u32 Width, irr::u32 Height);
+void copyARGBImageToRGBA(unsigned int *pSource, unsigned int *pDestination, unsigned int Width, unsigned int Height);
 
 /// @return Returns the value of an OpenGL Enum Value
 /// @param Which is the enum where we want to know the value.
@@ -136,9 +136,9 @@ void COpenGLIMGUIDriver::drawCommandList(ImDrawList *const pCommandList) {
     ImDrawIdx   *const pIndexBuffer  = &(pCommandList->IdxBuffer.front());
     int FirstIndexElement = 0;
 
-    glVertexPointer(2, GL_FLOAT,         sizeof(ImDrawVert), (void *)(((irr::u8 *)pVertexBuffer) + OFFSETOF(ImDrawVert, pos)));
-    glTexCoordPointer(2, GL_FLOAT,         sizeof(ImDrawVert), (void *)(((irr::u8 *)pVertexBuffer) + OFFSETOF(ImDrawVert, uv)));
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (void *)(((irr::u8 *)pVertexBuffer) + OFFSETOF(ImDrawVert, col)));
+    glVertexPointer(2, GL_FLOAT,         sizeof(ImDrawVert), (void *)(((unsigned char *)pVertexBuffer) + OFFSETOF(ImDrawVert, pos)));
+    glTexCoordPointer(2, GL_FLOAT,         sizeof(ImDrawVert), (void *)(((unsigned char *)pVertexBuffer) + OFFSETOF(ImDrawVert, uv)));
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (void *)(((unsigned char *)pVertexBuffer) + OFFSETOF(ImDrawVert, col)));
 
     for(int CommandIndex = 0; CommandIndex < pCommandList->CmdBuffer.size(); CommandIndex++) {
 
@@ -200,7 +200,7 @@ void COpenGLIMGUIDriver::drawGUIList(ImDrawData *const pDrawData) {
 }
 
 
-IGUITexture *COpenGLIMGUIDriver::createTexture(EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height) {
+IGUITexture *COpenGLIMGUIDriver::createTexture(EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height) {
     mTextureInstances++;
     CGUITexture *const pRealGUITexture = new CGUITexture();
 
@@ -280,7 +280,7 @@ IGUITexture *COpenGLIMGUIDriver::createFontTexture(void) {
     } else {
         ImGuiIO &rGUIIO  = ImGui::GetIO();
 
-        irr::u8 *pPixelData;
+        unsigned char *pPixelData;
         int Width, Height;
         rGUIIO.Fonts->GetTexDataAsAlpha8(&pPixelData, &Width, &Height);
         rGUIIO.Fonts->ClearTexData();
@@ -295,7 +295,7 @@ IGUITexture *COpenGLIMGUIDriver::createFontTexture(void) {
     return pGUITexture;
 }
 
-void COpenGLIMGUIDriver::updateTexture(IGUITexture *pGUITexture, EColorFormat ColorFormat, irr::u8 *pPixelData, irr::u32 Width, irr::u32 Height) {
+void COpenGLIMGUIDriver::updateTexture(IGUITexture *pGUITexture, EColorFormat ColorFormat, unsigned char *pPixelData, unsigned int Width, unsigned int Height) {
     CGUITexture *const pRealGUITexture = dynamic_cast<CGUITexture *>(pGUITexture);
 
     FASSERT(pRealGUITexture->mIsValid);
@@ -430,7 +430,7 @@ void COpenGLIMGUIDriver::updateFontTexture(IGUITexture *const pGUITexture) {
     } else {
         ImGuiIO &rGUIIO  = ImGui::GetIO();
 
-        irr::u8 *pPixelData;
+        unsigned char *pPixelData;
         int Width, Height;
         rGUIIO.Fonts->GetTexDataAsAlpha8(&pPixelData, &Width, &Height);
         rGUIIO.Fonts->ClearTexData();
@@ -459,12 +459,12 @@ void COpenGLIMGUIDriver::deleteTexture(IGUITexture *pGUITexture) {
 }
 
 namespace OpenGLHelper {
-void copyARGBImageToRGBA(irr::u32 *const pSource, irr::u32 *const pDestination, irr::u32 const Width, irr::u32 const Height) {
-    for(irr::u32 X = 0; X < Width; X++) {
-        for(irr::u32 Y = 0; Y < Height; Y++) {
+void copyARGBImageToRGBA(unsigned int *const pSource, unsigned int *const pDestination, unsigned int const Width, unsigned int const Height) {
+    for(unsigned int X = 0; X < Width; X++) {
+        for(unsigned int Y = 0; Y < Height; Y++) {
             irr::video::SColor PixelColor;
             PixelColor.setData(&pSource[X + Y * Width], irr::video::ECF_A8R8G8B8);
-            irr::u8 *const pDestPixel = (irr::u8 *)(&pDestination[X + Y * Width]);
+            unsigned char *const pDestPixel = (unsigned char *)(&pDestination[X + Y * Width]);
             PixelColor.toOpenGLColor(pDestPixel);
         }
     }
@@ -472,7 +472,7 @@ void copyARGBImageToRGBA(irr::u32 *const pSource, irr::u32 *const pDestination, 
     return;
 }
 
-ImTextureID createTextureInMemory(GLint OpenGLColorFormat, irr::u8 *const pPixelData, irr::u32 const Width, irr::u32 const Height) {
+ImTextureID createTextureInMemory(GLint OpenGLColorFormat, unsigned char *const pPixelData, unsigned int const Width, unsigned int const Height) {
     // Store current Texture handle
     GLint OldTextureID;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &OldTextureID);
@@ -494,15 +494,15 @@ ImTextureID createTextureInMemory(GLint OpenGLColorFormat, irr::u8 *const pPixel
     return pTexture;
 }
 
-ImTextureID createTextureIDFromRawData(EColorFormat const ColorFormat, irr::u8 *pPixelData, irr::u32 const Width, irr::u32 const Height) {
-    irr::u8 *pCopyImageData = nullptr;
+ImTextureID createTextureIDFromRawData(EColorFormat const ColorFormat, unsigned char *pPixelData, unsigned int const Width, unsigned int const Height) {
+    unsigned char *pCopyImageData = nullptr;
     GLint     OpenGLColor;
 
     switch(ColorFormat) {
         // convert color to OpenGL color format
         case ECF_A8R8G8B8:
-            pCopyImageData = reinterpret_cast<irr::u8 *>(new irr::u32[Width * Height]);
-            copyARGBImageToRGBA(reinterpret_cast<irr::u32 *>(pPixelData), reinterpret_cast<irr::u32 *>(pCopyImageData), Width, Height);
+            pCopyImageData = reinterpret_cast<unsigned char *>(new unsigned int[Width * Height]);
+            copyARGBImageToRGBA(reinterpret_cast<unsigned int *>(pPixelData), reinterpret_cast<unsigned int *>(pCopyImageData), Width, Height);
             OpenGLColor = GL_RGBA;
             pPixelData = pCopyImageData;
             break;
@@ -537,17 +537,17 @@ ImTextureID copyTextureIDFromIrrlichtImage(irr::video::IImage *const pImage) {
     // Convert pImage to RGBA
     int const Width  = pImage->getDimension().Width;
     int const Height = pImage->getDimension().Height;
-    irr::u32 *const pImageData = new irr::u32[Width * Height];
+    unsigned int *const pImageData = new unsigned int[Width * Height];
 
     for(int X = 0; X < Width; X++) {
         for(int Y = 0; Y < Height; Y++) {
             irr::video::SColor const PixelColor = pImage->getPixel(X, Y);
-            irr::u8 *const pPixelPointer = (irr::u8 *)(&pImageData[X + Y * Width]);
+            unsigned char *const pPixelPointer = (unsigned char *)(&pImageData[X + Y * Width]);
             PixelColor.toOpenGLColor(pPixelPointer);
         }
     }
 
-    ImTextureID const pTexture = createTextureInMemory(GL_RGBA, reinterpret_cast<irr::u8 *>(pImageData), Width, Height);
+    ImTextureID const pTexture = createTextureInMemory(GL_RGBA, reinterpret_cast<unsigned char *>(pImageData), Width, Height);
 
     delete[] pImageData;
 
@@ -560,12 +560,12 @@ ImTextureID copyTextureIDFromIrrlichtTexture(irr::video::ITexture *pTexture) {
     // Convert pImage to RGBA
     int const Width  = pTexture->getSize().Width;
     int const Height = pTexture->getSize().Height;
-    irr::u32 *const pImageData = new irr::u32[Width * Height];
+    unsigned int *const pImageData = new unsigned int[Width * Height];
 
-    irr::u32 const Pitch = pTexture->getPitch();
+    unsigned int const Pitch = pTexture->getPitch();
     irr::video::ECOLOR_FORMAT const ColorFormat = pTexture->getColorFormat();
-    irr::u32 const Bytes = irr::video::IImage::getBitsPerPixelFromFormat(ColorFormat) / 8;
-    irr::u8   *const pTextureData = reinterpret_cast<irr::u8 *>(pTexture->lock());
+    unsigned int const Bytes = irr::video::IImage::getBitsPerPixelFromFormat(ColorFormat) / 8;
+    unsigned char   *const pTextureData = reinterpret_cast<unsigned char *>(pTexture->lock());
 
     FASSERT(pTextureData);
 
@@ -573,14 +573,14 @@ ImTextureID copyTextureIDFromIrrlichtTexture(irr::video::ITexture *pTexture) {
         for(int Y = 0; Y < Height; Y++) {
             irr::video::SColor PixelColor = irr::video::SColor();
             PixelColor.setData((void *)(pTextureData + (Y * Pitch) + (X * Bytes)), ColorFormat);
-            irr::u8 *const pPixelPointer = (irr::u8 *)(&pImageData[X + Y * Width]);
+            unsigned char *const pPixelPointer = (unsigned char *)(&pImageData[X + Y * Width]);
             PixelColor.toOpenGLColor(pPixelPointer);
         }
     }
 
     pTexture->unlock();
 
-    ImTextureID const pNewTexture = createTextureInMemory(GL_RGBA, reinterpret_cast<irr::u8 *>(pImageData), Width, Height);
+    ImTextureID const pNewTexture = createTextureInMemory(GL_RGBA, reinterpret_cast<unsigned char *>(pImageData), Width, Height);
 
     delete[] pImageData;
 
@@ -594,8 +594,8 @@ ImTextureID getTextureIDFromIrrlichtTexture(irr::video::ITexture *pTexture) {
     class COpenGLDriver;
     class COpenGLTexture : public irr::video::ITexture {
     public:
-        irr::core::dimension2d<irr::u32> ImageSize;
-        irr::core::dimension2d<irr::u32> TextureSize;
+        irr::core::dimension2d<unsigned int> ImageSize;
+        irr::core::dimension2d<unsigned int> TextureSize;
         irr::video::ECOLOR_FORMAT ColorFormat;
         COpenGLDriver *Driver;
         irr::video::IImage *Image;
@@ -606,7 +606,7 @@ ImTextureID getTextureIDFromIrrlichtTexture(irr::video::ITexture *pTexture) {
         GLenum PixelFormat;
         GLenum PixelType;
 
-        irr::u8 MipLevelStored;
+        unsigned char MipLevelStored;
         bool HasMipMaps;
         bool MipmapLegacyMode;
         bool IsRenderTarget;
@@ -628,7 +628,7 @@ ImTextureID copyTextureIDFromGUIFont(void) {
     ImGuiIO &rGUIIO  = ImGui::GetIO();
 
     // Get Font Texture from IMGUI system.
-    irr::u8 *pPixelData;
+    unsigned char *pPixelData;
     int Width, Height;
     rGUIIO.Fonts->GetTexDataAsAlpha8(&pPixelData, &Width, &Height);
 
